@@ -20,6 +20,7 @@ dependencies:
 ## 不做
 - 维护“知识图谱/智能推荐/存储结构/ADR”体系化建设
 - 自动生成或强制落盘大量文档
+- 代替 `permanent-memory` 维护跨任务长期稳定知识
 
 ## 输入
 - title：一句话标题（必填）
@@ -43,6 +44,11 @@ dependencies:
   "risks": [{"risk": "string", "mitigation": "string"}]
 }
 ```
+
+## 与 permanent-memory 的边界
+- `context-archiver`：记录本次任务的结论、改动点、验证与风险
+- `permanent-memory`：只沉淀跨任务稳定复用的约定、接口、命令、回滚策略
+- 当一条结论满足“下次大概率还会复用”时，再升级写入 `memory/永久记忆库.md`
 
 ## 调用方式
 - `$context-archiver` + 标题 +（可选）上述细节

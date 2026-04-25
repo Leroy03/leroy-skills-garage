@@ -16,7 +16,8 @@ dependencies:
 - 优先读取项目内索引，而不是每次从头扫描：
   - `.trae/documents/00-文件树索引.md`（目录与模块线索）
   - `.trae/documents/01-知识库索引.md`（文档/API/表/配置/工具索引）
-- 当索引明显过期或缺失线索时，再扩大到代码搜索/依赖分析。
+- 先尝试从 `knowledge-keeper` 拿 `entry_points` / `related_files` / `commands`
+- 当索引明显过期、缺失或无法覆盖任务时，再扩大到代码搜索/依赖分析
 - 更新索引：`python .\.trae\scripts\update_knowledge_index.py`
 
 ## 适用场景
@@ -28,6 +29,7 @@ dependencies:
 ## 不做
 - 直接输出实现代码（交给 pragmatic-coder）
 - 给优化/重构方案（交给 code-optimizer）
+- 代替 `knowledge-keeper` 长期维护知识索引
 
 ## 输入
 - target：文件路径/类名/方法名/模块名/功能描述（至少一个）

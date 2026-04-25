@@ -1,0 +1,66 @@
+version: 1
+principles:
+  - think_before_acting
+  - prefer_minimal_change
+  - state_assumptions
+  - verify_with_evidence
+  - handoff_with_structure
+defaults:
+  response_style:
+    concise: true
+    evidence_first: true
+  handoff_schema:
+    - objective
+    - in_scope
+    - out_of_scope
+    - dependencies
+    - risks
+    - acceptance_criteria
+    - verification
+roles:
+  context-builder:
+    produces:
+      - core_files
+      - dependencies
+      - impact_scope
+      - risk_level
+      - test_files
+  pragmatic-coder:
+    consumes:
+      - core_files
+      - dependencies
+      - risk_level
+    produces:
+      - changed_files
+      - key_changes
+      - validation_steps
+  bug-hunter:
+    consumes:
+      - entry_points
+      - related_files
+      - logs
+    produces:
+      - root_cause
+      - solutions
+      - verification_plan
+  code-reviewer:
+    consumes:
+      - changed_files
+      - impact_scope
+      - risk_level
+    produces:
+      - issues
+      - recommendations
+  code-optimizer:
+    consumes:
+      - target_scope
+      - constraints
+    produces:
+      - issue_list
+      - minimal_change_plan
+      - verification_checklist
+rules:
+  - Do not expand scope without explicit justification.
+  - Use repository paths and symbols in outputs whenever possible.
+  - Separate facts, assumptions, and recommendations.
+  - If a dependency or document is missing, report it before proceeding.

@@ -10,7 +10,7 @@ description: >-
 
 # DevFlow Marshal（技能入口）
 
-主协议文件：`.cursor/inject/devflow-marshal-context.md`
+主协议文件：`inject/devflow-marshal-context.md`
 
 ## 使用规则
 
@@ -33,7 +33,7 @@ description: >-
 
 ## 可选脚本（本仓库）
 
-若当前工作区含 `scripts/devflow.py`，优先用它维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名；说明见仓库根目录 `docs/devflow-run-tooling.md`。Subagent／critic 启用范围见 `docs/devflow-marshal-subagent-scope.md`。
+若当前工作区含 `scripts/devflow.py`，优先用它维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名；说明见仓库根目录 `docs/devflow-run-tooling.md`。当前仓库的职责映射见 `docs/devflow-marshal-subagent-scope.md`。
 
 ## 输出压缩
 
