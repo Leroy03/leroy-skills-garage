@@ -1,7 +1,7 @@
 ---
 name: "bug-hunter"
 description: "专业 Debug：日志分析、复现路径、根因定位、修复方案。只专注定位问题并提出解决方案。"
-collaboration_protocol: "skills/collaboration-protocol.yaml"
+collaboration_protocol: "protocols/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
   - karpathy-guidelines

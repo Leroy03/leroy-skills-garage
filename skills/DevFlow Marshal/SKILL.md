@@ -10,12 +10,12 @@ description: >-
 
 # DevFlow Marshal（技能入口）
 
-主协议文件：`skills/inject/devflow-marshal-context.md`
+主协议文件：`inject/devflow-marshal-context.md`
 
 ## 使用规则
 
 - 触发条件：用户提到流程治理、分级流转、立案/归档、门下省审查、run 管理，或显式 @`devflow-marshal`。
-- 首动作：若尚未分流，先经 `entry-router` 判断等级；进入治理后仍需先用一句话宣布等级。
+- 首动作：若尚未分流，先经 `entry-router` 判断等级；跨模型协作时优先同时给出 `L0-L3` 与 `⚪/🟢/🟡/🔴`；进入治理后仍需先用一句话宣布等级。
 - 强制升级：用户若说 `正式/归档/立案/走流程`，必须按 `🔴`。
 - 用户异议：若用户对等级有异议，立即上调，不争辩。
 
@@ -33,7 +33,7 @@ description: >-
 
 ## 可选脚本（本仓库）
 
-若当前工作区含 `scripts/devflow.py`，优先用它维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名；说明见仓库根目录 `skills/docs/devflow-run-tooling.md`。当前仓库的职责映射见 `skills/docs/devflow-marshal-subagent-scope.md`。
+若当前工作区含 `scripts/devflow.py`，优先用它维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名；说明见仓库根目录 `docs/devflow-run-tooling.md`。当前仓库的职责映射见 `docs/devflow-marshal-subagent-scope.md`。
 
 ## 输出压缩
 

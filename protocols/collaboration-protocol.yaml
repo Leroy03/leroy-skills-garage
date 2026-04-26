@@ -11,6 +11,9 @@ defaults:
   response_style:
     concise: true
     evidence_first: true
+  file_encoding:
+    text: utf-8
+    bom: false
   handoff_schema:
     - objective
     - in_scope
@@ -21,10 +24,14 @@ defaults:
     - verification
 grades:
   "⚪":
+    level: L0
+    alias: direct
     process: direct_answer
     required_skills: []
     verification: minimal_if_needed
   "🟢":
+    level: L1
+    alias: minimal
     process: minimal_execution
     required_skills:
       - karpathy-guidelines
@@ -35,6 +42,8 @@ grades:
       - verification-before-completion
     verification: direct_evidence
   "🟡":
+    level: L2
+    alias: planned
     process: planned_and_reviewed
     required_skills:
       - entry-router
@@ -49,16 +58,38 @@ grades:
       - verification-before-completion
     verification: reviewed_approval
   "🔴":
+    level: L3
+    alias: formal
     process: governed_delivery
     required_skills:
       - entry-router
       - karpathy-guidelines
       - devflow-marshal
     verification: state_machine_and_artifacts
+routing_axes:
+  scope:
+    - read_only
+    - single_file
+    - multi_file
+    - cross_system
+  risk:
+    - low
+    - medium
+    - high
+  ambiguity:
+    - low
+    - medium
+    - high
+  governance:
+    - none
+    - review_needed
+    - formal_required
 roles:
   entry-router:
     produces:
+      - level
       - grade
+      - grade_alias
       - recommended_skills
       - required_checks
       - stop_point
@@ -133,5 +164,7 @@ rules:
   - Separate facts, assumptions, and recommendations.
   - If a dependency or document is missing, report it before proceeding.
   - Start non-trivial work by selecting the lightest valid grade.
+  - Prefer explicit level labels L0-L3 when routing across different model vendors.
   - Prefer guardrails first, then workflow, then implementation.
   - Use tdd-lite only when it materially reduces regression risk.
+  - Default all text and code files to UTF-8 without BOM unless the target file already requires another encoding.

@@ -37,9 +37,9 @@ description: "Maintains reusable project knowledge indexes and lookup hints. Inv
 ```
 
 ## 知识来源优先级
-1. `documents/01-知识库索引.md`
-2. `documents/00-文件树索引.md`
-3. `README.md`、`skills/docs/**`、`skills/memory/**`
+1. `docs/indexes/01-知识库索引.md`
+2. `docs/indexes/00-文件树索引.md`
+3. `README.md`、`docs/**`、`memory/**`
 4. 必要时再回到代码搜索
 
 ## 维护规则
@@ -49,5 +49,5 @@ description: "Maintains reusable project knowledge indexes and lookup hints. Inv
 
 ## 索引刷新
 - 使用：`python .\scripts\update_knowledge_index.py`
-- 刷新后应更新 `documents/00-文件树索引.md`
-- 刷新后应更新 `documents/01-知识库索引.md`
+- 刷新后应更新 `docs/indexes/00-文件树索引.md`
+- 刷新后应更新 `docs/indexes/01-知识库索引.md`

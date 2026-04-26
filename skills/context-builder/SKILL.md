@@ -1,7 +1,7 @@
 ---
 name: "context-builder"
 description: "智能构建任务上下文：相关文件、依赖关系、测试覆盖、影响分析。为其他 skills 提供可执行的上下文。"
-collaboration_protocol: "skills/collaboration-protocol.yaml"
+collaboration_protocol: "protocols/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
   - knowledge-keeper
@@ -14,8 +14,8 @@ dependencies:
 
 ## 持久上下文优先（减少 token/耗时）
 - 优先读取项目内索引，而不是每次从头扫描：
-  - `documents/00-文件树索引.md`（目录与模块线索）
-  - `documents/01-知识库索引.md`（文档/API/表/配置/工具索引）
+  - `docs/indexes/00-文件树索引.md`（目录与模块线索）
+  - `docs/indexes/01-知识库索引.md`（文档/API/表/配置/工具索引）
 - 先尝试从 `knowledge-keeper` 拿 `entry_points` / `related_files` / `commands`
 - 当索引明显过期、缺失或无法覆盖任务时，再扩大到代码搜索/依赖分析
 - 更新索引：`python .\scripts\update_knowledge_index.py`

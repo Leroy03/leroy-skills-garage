@@ -1,7 +1,7 @@
 ---
 name: "code-optimizer"
 description: "针对明确目标做代码优化/重构（可读性、性能、可维护性），坚持最小改动与可验证。"
-collaboration_protocol: "skills/collaboration-protocol.yaml"
+collaboration_protocol: "protocols/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
   - karpathy-guidelines

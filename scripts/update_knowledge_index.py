@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS_DIR = ROOT / "documents"
+DOCS_DIR = ROOT / "docs" / "indexes"
 IGNORE_DIRS = {".git", ".venv", "__pycache__", "node_modules"}
 
 
@@ -66,11 +66,11 @@ def collect_skill_entries() -> list[str]:
 def collect_support_entries() -> list[str]:
     lines = [
         "## 支撑资源",
-        "- DevFlow 协议：`skills/inject/devflow-marshal-context.md`",
+        "- DevFlow 协议：`inject/devflow-marshal-context.md`",
         "- DevFlow 工具：`scripts/devflow.py`",
-        "- DevFlow 文档：`skills/docs/devflow-run-tooling.md`、`skills/docs/devflow-marshal-subagent-scope.md`",
-        "- 记忆库：`skills/memory/永久记忆库.md`、`skills/memory/永久记忆库_INDEX.md`",
-        "- 协作协议：`skills/collaboration-protocol.yaml`",
+        "- DevFlow 文档：`docs/devflow-run-tooling.md`、`docs/devflow-marshal-subagent-scope.md`",
+        "- 记忆库：`memory/永久记忆库.md`、`memory/永久记忆库_INDEX.md`",
+        "- 协作协议：`protocols/collaboration-protocol.yaml`",
         "",
     ]
     return lines

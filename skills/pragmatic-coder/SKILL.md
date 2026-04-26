@@ -1,7 +1,7 @@
 ---
 name: "pragmatic-coder"
 description: "从简编码：清晰 > 聪明，够用 > 完美，最小改动且可验证。"
-collaboration_protocol: "skills/collaboration-protocol.yaml"
+collaboration_protocol: "protocols/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
   - karpathy-guidelines

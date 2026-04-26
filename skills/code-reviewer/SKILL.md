@@ -1,7 +1,7 @@
 ---
 name: "code-reviewer"
 description: "代码评审：正确性、可维护性、性能与安全性审查，输出可执行的修改建议。"
-collaboration_protocol: "skills/collaboration-protocol.yaml"
+collaboration_protocol: "protocols/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
   - karpathy-guidelines
