@@ -1,8 +1,10 @@
 version: 1
 principles:
-  - think_before_acting
-  - prefer_minimal_change
-  - state_assumptions
+  - think_before_coding
+  - simplicity_first
+  - surgical_changes
+  - goal_driven_execution
+  - grade_before_process
   - verify_with_evidence
   - handoff_with_structure
 defaults:
@@ -17,7 +19,55 @@ defaults:
     - risks
     - acceptance_criteria
     - verification
+grades:
+  "⚪":
+    process: direct_answer
+    required_skills: []
+    verification: minimal_if_needed
+  "🟢":
+    process: minimal_execution
+    required_skills:
+      - karpathy-guidelines
+    optional_skills:
+      - knowledge-keeper
+      - context-builder
+      - tdd-lite
+      - verification-before-completion
+    verification: direct_evidence
+  "🟡":
+    process: planned_and_reviewed
+    required_skills:
+      - entry-router
+      - karpathy-guidelines
+      - task-planner
+    optional_skills:
+      - solution-designer
+      - context-builder
+      - tdd-lite
+      - code-reviewer
+      - qa-gatekeeper
+      - verification-before-completion
+    verification: reviewed_approval
+  "🔴":
+    process: governed_delivery
+    required_skills:
+      - entry-router
+      - karpathy-guidelines
+      - devflow-marshal
+    verification: state_machine_and_artifacts
 roles:
+  entry-router:
+    produces:
+      - grade
+      - recommended_skills
+      - required_checks
+      - stop_point
+  karpathy-guidelines:
+    produces:
+      - assumptions
+      - simplest_viable_path
+      - scope_guardrails
+      - verification_goal
   context-builder:
     produces:
       - core_files
@@ -59,8 +109,29 @@ roles:
       - issue_list
       - minimal_change_plan
       - verification_checklist
+  verification-before-completion:
+    consumes:
+      - validation_steps
+      - test_results
+      - review_findings
+    produces:
+      - evidence
+      - residual_risks
+      - completion_decision
+  tdd-lite:
+    consumes:
+      - target_behaviors
+      - risk_level
+      - available_test_framework
+    produces:
+      - test_strategy
+      - new_or_updated_tests
+      - evidence
 rules:
   - Do not expand scope without explicit justification.
   - Use repository paths and symbols in outputs whenever possible.
   - Separate facts, assumptions, and recommendations.
   - If a dependency or document is missing, report it before proceeding.
+  - Start non-trivial work by selecting the lightest valid grade.
+  - Prefer guardrails first, then workflow, then implementation.
+  - Use tdd-lite only when it materially reduces regression risk.

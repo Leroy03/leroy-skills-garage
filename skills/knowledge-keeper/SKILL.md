@@ -37,9 +37,9 @@ description: "Maintains reusable project knowledge indexes and lookup hints. Inv
 ```
 
 ## 知识来源优先级
-1. `.trae/documents/01-知识库索引.md`
-2. `.trae/documents/00-文件树索引.md`
-3. `README.md`、`docs/**`、`memory/**`
+1. `documents/01-知识库索引.md`
+2. `documents/00-文件树索引.md`
+3. `README.md`、`skills/docs/**`、`skills/memory/**`
 4. 必要时再回到代码搜索
 
 ## 维护规则
@@ -48,6 +48,6 @@ description: "Maintains reusable project knowledge indexes and lookup hints. Inv
 - 如果没有足够证据，明确标记 `confidence=low`
 
 ## 索引刷新
-- 使用：`python .\.trae\scripts\update_knowledge_index.py`
-- 刷新后应更新 `.trae/documents/00-文件树索引.md`
-- 刷新后应更新 `.trae/documents/01-知识库索引.md`
+- 使用：`python .\scripts\update_knowledge_index.py`
+- 刷新后应更新 `documents/00-文件树索引.md`
+- 刷新后应更新 `documents/01-知识库索引.md`

@@ -1,11 +1,13 @@
 ---
 name: "code-optimizer"
 description: "针对明确目标做代码优化/重构（可读性、性能、可维护性），坚持最小改动与可验证。"
-collaboration_protocol: ".trae/skills/collaboration-protocol.yaml"
+collaboration_protocol: "skills/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
+  - karpathy-guidelines
   - context-builder
   - pragmatic-coder
+  - verification-before-completion
 ---
 
 # 代码优化（code-optimizer）
@@ -22,6 +24,7 @@ dependencies:
 - 没有收益证明的架构重写/大规模抽象
 - 引入新框架/新中间件来解决局部问题
 - 把 Bug 定位当成优化做（Bug 优先交给 bug-hunter）
+- 借“顺手优化”扩大本次任务范围
 
 ## 输入
 - 目标范围：文件/类/方法/接口/调用链（至少一个）
@@ -32,6 +35,11 @@ dependencies:
 - 问题清单（按 P0/P1/P2，给出位置与理由）
 - 最小改动方案（每项含收益、风险、回滚点）
 - 验证清单（要跑的用例/测试、需要关注的回归点）
+
+## 优化约束
+- 先过一遍 `karpathy-guidelines`，确认有没有更小的解法
+- 优先删复杂度，不优先加抽象
+- 改完后必须经过 `verification-before-completion`
 
 ## 怎么调用
 - `$code-optimizer` + 目标范围 + 现象 + 约束

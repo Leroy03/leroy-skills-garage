@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Minimal DevFlow run helper aligned with inject/devflow-marshal-context.md section 9."""
+"""Minimal DevFlow run helper aligned with skills/inject/devflow-marshal-context.md section 9."""
 
 from __future__ import annotations
 

@@ -1,10 +1,12 @@
 ---
 name: "code-reviewer"
 description: "代码评审：正确性、可维护性、性能与安全性审查，输出可执行的修改建议。"
-collaboration_protocol: ".trae/skills/collaboration-protocol.yaml"
+collaboration_protocol: "skills/collaboration-protocol.yaml"
 version: "1.0.0"
 dependencies:
+  - karpathy-guidelines
   - context-builder
+  - verification-before-completion
 ---
 
 # Code-Reviewer（代码评审）
@@ -37,6 +39,12 @@ dependencies:
 - 安全性：敏感信息、鉴权遗漏、注入风险、反序列化风险
 - 性能：N+1、全表扫描、循环 IO、无界集合增长
 - 可维护性：重复逻辑、职责过重、命名与分层是否清晰
+- 简洁性：是否存在过度抽象、过度配置、为未来而写的复杂度
+
+## 评审约束
+- 先过一遍 `karpathy-guidelines`：优先识别乱猜、过度工程、越界改动
+- 建议必须能追溯到明确风险或收益，不给“看起来更优雅”的空泛意见
+- 若结论涉及“可发布/可完成”，应附带 `verification-before-completion` 所需证据
 
 ## 调用方式
 - `$code-reviewer` + 文件/改动范围 +（可选）评审重点

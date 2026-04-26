@@ -6,8 +6,8 @@ from __future__ import annotations
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
-DOCS_DIR = ROOT / ".trae" / "documents"
+ROOT = Path(__file__).resolve().parents[1]
+DOCS_DIR = ROOT / "documents"
 IGNORE_DIRS = {".git", ".venv", "__pycache__", "node_modules"}
 
 
@@ -21,7 +21,7 @@ def iter_tree(base: Path, depth: int = 2) -> list[str]:
             [
                 child
                 for child in path.iterdir()
-                if child.name not in IGNORE_DIRS and child.name != ".trae"
+                if child.name not in IGNORE_DIRS
             ],
             key=lambda p: (p.is_file(), p.name.lower()),
         )
@@ -37,7 +37,7 @@ def iter_tree(base: Path, depth: int = 2) -> list[str]:
 
 def collect_skill_entries() -> list[str]:
     entries: list[str] = []
-    for skill_file in sorted(ROOT.glob("*/SKILL.md"), key=lambda p: p.parent.name.lower()):
+    for skill_file in sorted(ROOT.glob("skills/*/SKILL.md"), key=lambda p: p.parent.name.lower()):
         skill_dir = skill_file.parent
         entries.append(f"## `{skill_dir.name}`")
         entries.append(f"- 路径：`{skill_file.relative_to(ROOT).as_posix()}`")
@@ -66,11 +66,11 @@ def collect_skill_entries() -> list[str]:
 def collect_support_entries() -> list[str]:
     lines = [
         "## 支撑资源",
-        "- DevFlow 协议：`inject/devflow-marshal-context.md`",
+        "- DevFlow 协议：`skills/inject/devflow-marshal-context.md`",
         "- DevFlow 工具：`scripts/devflow.py`",
-        "- DevFlow 文档：`docs/devflow-run-tooling.md`、`docs/devflow-marshal-subagent-scope.md`",
-        "- 记忆库：`memory/永久记忆库.md`、`memory/永久记忆库_INDEX.md`",
-        "- 协作协议：`.trae/skills/collaboration-protocol.yaml`",
+        "- DevFlow 文档：`skills/docs/devflow-run-tooling.md`、`skills/docs/devflow-marshal-subagent-scope.md`",
+        "- 记忆库：`skills/memory/永久记忆库.md`、`skills/memory/永久记忆库_INDEX.md`",
+        "- 协作协议：`skills/collaboration-protocol.yaml`",
         "",
     ]
     return lines
