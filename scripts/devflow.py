@@ -171,6 +171,26 @@ def _replace_python(cmd: str, python_exec: str) -> str:
     return cmd
 
 
+def _extract_missing_module(stderr_text: str) -> str | None:
+    m = re.search(r"No module named ['\"]?([a-zA-Z0-9_\.]+)['\"]?", stderr_text)
+    if not m:
+        return None
+    return m.group(1)
+
+
+def _auto_install_package(python_exec: str, project_root: Path, package_name: str) -> None:
+    subprocess.run(
+        [python_exec, "-m", "pip", "install", package_name],
+        check=True,
+        cwd=str(project_root),
+    )
+
+
+def _parse_auto_install_whitelist(raw: str) -> set[str]:
+    items = [x.strip().lower() for x in raw.split(",")]
+    return {x for x in items if x}
+
+
 def cmd_create_run(args: argparse.Namespace) -> None:
     root = devflow_root()
     d = date.today().strftime("%Y%m%d")
@@ -384,6 +404,12 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
     if not isinstance(commands, list) or not commands:
         raise SystemExit("testing.commands is empty in devflow.project.yaml")
     run_dir = find_run_dir(args.run_id) if args.run_id else None
+    module_to_package = {
+        "pytest": "pytest",
+        "pytest_cov": "pytest-cov",
+        "coverage": "coverage",
+    }
+    auto_whitelist = _parse_auto_install_whitelist(args.auto_install_whitelist)
     results: list[dict[str, Any]] = []
     total_start = datetime.now(timezone.utc)
     for idx, cmd in enumerate(commands, start=1):
@@ -400,6 +426,25 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
             encoding="utf-8",
             errors="replace",
         )
+        if (
+            args.auto_install_missing
+            and proc.returncode != 0
+            and " -m " in cmd_run
+        ):
+            missing_module = _extract_missing_module(proc.stderr)
+            if missing_module:
+                package_name = module_to_package.get(missing_module, missing_module)
+                if package_name.lower() in auto_whitelist:
+                    _auto_install_package(python_exec, project_root, package_name)
+                    proc = subprocess.run(
+                        cmd_run,
+                        shell=True,
+                        cwd=str(project_root),
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="replace",
+                    )
         ended = datetime.now(timezone.utc)
         duration_ms = int((ended - started).total_seconds() * 1000)
         item = {
@@ -572,6 +617,12 @@ def main() -> None:
     c8.add_argument("--run-id")
     c8.add_argument("--level", default="L2")
     c8.add_argument("--stop-on-fail", action="store_true")
+    c8.add_argument("--auto-install-missing", action="store_true")
+    c8.add_argument(
+        "--auto-install-whitelist",
+        default="pytest,pytest-cov,coverage",
+        help="Comma-separated pip package whitelist for auto install",
+    )
     c8.add_argument("--output")
     c8.set_defaults(func=cmd_collect_evidence)
 
