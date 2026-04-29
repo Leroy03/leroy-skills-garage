@@ -300,28 +300,8 @@ def cmd_init_project(args: argparse.Namespace) -> None:
     if cfg_path.exists() and not args.force:
         skipped += 1
     else:
-        cfg_text = (
-            "version: 1\n"
-            "collaboration_profile: global-default\n"
-            "testing:\n"
-            "  required_for_levels: [L2, L3]\n"
-            "  venv:\n"
-            "    enabled: true\n"
-            "    path: .venv\n"
-            "  commands:\n"
-            "    - \"python -m pytest -q\"\n"
-            "  coverage:\n"
-            "    enabled: false\n"
-            "    min_percent: 0\n"
-            "  extra_evidence: []\n"
-            "gates:\n"
-            "  reviewed_requires: [01_plan.md, 02_review.md, test_result.json]\n"
-            "  delivered_requires: [03_dispatch.md, 04_delivery.md, regression_scope.md]\n"
-            "  archived_requires: [05_postmortem.md]\n"
-            "skill_contract:\n"
-            "  enabled: true\n"
-            "  require_fields: [inputs_required, outputs_required, evidence_files]\n"
-        )
+        # Write JSON text to .yaml path so parsing works without PyYAML dependency.
+        cfg_text = json.dumps(DEFAULT_PROJECT_CONFIG, ensure_ascii=False, indent=2) + "\n"
         cfg_path.write_text(cfg_text, encoding="utf-8")
         created += 1
     for rel, content in PROJECT_TEMPLATE_FILES.items():
