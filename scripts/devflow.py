@@ -112,6 +112,12 @@ def _project_config_path(project_root: Path) -> Path:
     return project_root / "devflow.project.yaml"
 
 
+def _adhoc_dir(project_root: Path) -> Path:
+    base = devflow_root() / "quick" / _slug(project_root.name, 32)
+    base.mkdir(parents=True, exist_ok=True)
+    return base
+
+
 def _load_project_config(project_root: Path) -> dict[str, Any]:
     path = _project_config_path(project_root)
     if not path.is_file():
@@ -616,11 +622,11 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
         "quality_gates": {"review_gate": "skipped", "delivery_gate": "skipped", "reasons": []},
     }
     output_path = Path(args.output).resolve() if args.output else (
-        (run_dir / "test_result.json") if run_dir else (project_root / "devflow" / "test_result.json")
+        (run_dir / "test_result.json") if run_dir else (_adhoc_dir(project_root) / "test_result.json")
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    event_dir = run_dir if run_dir else (project_root / "devflow")
+    event_dir = run_dir if run_dir else _adhoc_dir(project_root)
     _append_event(
         event_dir,
         {
@@ -650,7 +656,7 @@ def cmd_validate_skill_contract(args: argparse.Namespace) -> None:
         print(json.dumps({"enabled": False, "status": "skipped"}, ensure_ascii=False))
         return
     required_fields = contract_cfg.get("require_fields", [])
-    run_dir = find_run_dir(args.run_id) if args.run_id else (project_root / "devflow")
+    run_dir = find_run_dir(args.run_id) if args.run_id else _adhoc_dir(project_root)
     run_dir.mkdir(parents=True, exist_ok=True)
     report_items = []
     missing_total: list[str] = []
