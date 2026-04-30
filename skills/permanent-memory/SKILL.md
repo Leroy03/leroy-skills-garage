@@ -53,3 +53,24 @@ description: "把关键结论/决策/接口/命令沉淀为仓库内可长期复
 - 验证：mvn -f .\\SKILL\\quote-sync\\pom.xml test
 ```
 
+## Contract
+
+- `inputs_required`
+  - `stable_facts`
+  - `evidence_links`
+  - `verification_method`
+- `outputs_required`
+  - `memory/永久记忆库.md` 新增条目
+  - `memory/永久记忆库_INDEX.md` 索引更新
+- `evidence_files`
+  - `memory/永久记忆库.md`
+  - `memory/永久记忆库_INDEX.md`
+
+## Fallback
+
+- 若信息仍不稳定：先回交 `context-archiver` 暂存，不写入永久记忆。
+
+## Handoff
+
+- 沉淀完成后交接 `knowledge-keeper` / `context-builder` 进行复用。
+
