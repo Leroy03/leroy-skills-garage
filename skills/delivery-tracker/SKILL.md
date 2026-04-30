@@ -26,3 +26,26 @@ description: "Tracks single delivery readiness with checklist, verification path
 
 - 缺少验证证据不得标记完成。
 - 回滚触发条件必须明确可执行。
+
+## Contract
+
+- `inputs_required`
+  - `delivery_scope`
+  - `verification_evidence`
+  - `rollback_constraints`
+- `outputs_required`
+  - `delivery_checklist`
+  - `verification_path`
+  - `rollback_plan`
+  - `signoff_status`
+- `evidence_files`
+  - `04_delivery.md`
+  - `gate_reports/*.json`
+
+## Fallback
+
+- 若关键证据缺失：标记 `signoff_status=blocked` 并给缺失列表。
+
+## Handoff
+
+- 交接 `DevFlow Marshal` 进行状态流转，或交接 `memory-sync-gate` 做封存前检查。
