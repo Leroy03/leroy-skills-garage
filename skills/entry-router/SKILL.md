@@ -31,6 +31,20 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - `required_checks`：本轮至少要完成的验证或门禁
 - `stop_point`：做到哪里就该停下来等确认
 
+## Contract
+
+- `inputs_required`
+  - `request`
+  - `context`（可选）
+- `outputs_required`
+  - `level`
+  - `grade`
+  - `recommended_skills`
+  - `required_checks`
+  - `stop_point`
+- `evidence_files`
+  - 无硬性文件（决策型 skill）
+
 ## 模型兼容说明
 - 对人展示时，保留 `⚪/🟢/🟡/🔴` 与中文层名
 - 对模型执行时，优先使用 `L0/L1/L2/L3` 与显式条件判断
@@ -56,12 +70,15 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 
 ### `L2 / 🟡 常奏 / planned`
 - 适用：多文件但边界清楚，有规划/评审需求
-- 默认链路：`karpathy-guidelines` -> `solution-designer`（如需） -> `task-planner` -> `context-builder` -> `pragmatic-coder` -> `code-reviewer` / `qa-gatekeeper` -> `verification-before-completion`
+- 默认链路：`karpathy-guidelines` -> `solution-designer`（如需） -> `task-planner` -> `context-builder`（可选） -> `pragmatic-coder` -> `test-evidence-packager` -> `skill-contract-checker` -> `verification-before-completion`
+- 测试与证据：默认加入 `test-evidence-packager`，并要求输出 `test_result.json`
+- 风险触发：仅在高风险、发布前或跨系统联调时追加 `qa-gatekeeper` 与 `code-reviewer`
 - 停点：`Reviewed=Approved`
 
 ### `L3 / 🔴 正奏 / formal`
 - 适用：正式需求、高风险改动、跨系统、上线/归档/立案
 - 默认链路：`DevFlow Marshal` 主导；其余 skills 按阶段调用
+- 治理校验：默认加入 `skill-contract-checker` 与 `memory-sync-gate`
 - 停点：按治理状态机推进
 
 ## 决策规则
@@ -79,3 +96,35 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 
 ## 调用方式
 - `$entry-router` + 用户需求 +（可选）风险/时限/是否正式
+
+## Fallback
+
+- 信息不足时，默认在 `L1/L2` 间先取 `L2` 并标注最小假设。
+- 用户对分级有异议时，立即上调，不争辩。
+
+## Handoff
+
+- `L1`：`pragmatic-coder` -> `verification-before-completion`
+- `L2`：`task-planner` -> `test-evidence-packager` -> `skill-contract-checker`
+- `L3`：`DevFlow Marshal` 主导治理
+
+## 与 DevFlow 命令的衔接（新增）
+
+- 当进入 `L2/L3` 时，建议将关键检查映射到全局 `devflow.py`：
+  - `test-evidence-packager` -> `collect-evidence`
+  - `skill-contract-checker` -> `validate-skill-contract`
+- 输出中建议明确：
+  - `required_checks` 是否包含 `test_result.json`
+  - `stop_point` 前是否必须通过门禁校验
+
+## Frontend 专项分流
+
+当需求涉及“前端设计/页面产出”时，先按交付物类型分流，避免误用技能：
+
+- 若交付物是**产品界面**（网站、落地页、后台、组件、应用页面、交互界面），路由到 `frontend-design`。
+- 若交付物是**演示文稿**（多页 slides、演讲稿、Pitch deck、PPT/PPTX 转 HTML、现有 slide deck 增强），路由到 `frontend-slides`。
+- 若需求同时包含两类交付物（例如“先做官网，再做汇报简报”），拆分为两个子任务并分别路由：
+  - 子任务 A：`frontend-design`
+  - 子任务 B：`frontend-slides`
+
+若用户只说“做一个前端展示”且语义不清，先反问一次确认最终交付物是“产品 UI”还是“简报 deck”；若用户强调“用于演讲/汇报”，默认优先 `frontend-slides`。
