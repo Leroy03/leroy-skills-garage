@@ -56,3 +56,24 @@ description: "Applies lightweight test-first or test-near workflow for risky cha
 
 ## 调用方式
 - `$tdd-lite` + 改动目标 + 风险说明 + 当前可用测试框架
+
+## Contract
+
+- `inputs_required`
+  - `target_behaviors`
+  - `risk_level`
+  - `available_test_framework`
+- `outputs_required`
+  - `test_strategy`
+  - `new_or_updated_tests`
+  - `evidence`
+- `evidence_files`
+  - `test_result.json`（建议）
+
+## Fallback
+
+- 若现有测试框架缺失且不宜引入：降级为 `Test Near` 并强调人工回归清单。
+
+## Handoff
+
+- 交接 `pragmatic-coder` 完成最小实现，再交给 `verification-before-completion`。
