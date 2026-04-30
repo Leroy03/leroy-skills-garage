@@ -29,3 +29,25 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 
 ## 命令映射
 - 當前由 skill 直接執行檢查，後續可擴充 `devflow.py validate-memory-gate`。
+
+## Contract
+
+- `inputs_required`
+  - `run_id`
+  - `delivery_artifacts`
+  - `evidence_files`
+- `outputs_required`
+  - `memory_summary.md`
+  - `decision_log.md`
+  - `memory_index.json`
+- `evidence_files`
+  - `04_delivery.md`
+  - `gate_reports/*.json`
+
+## Fallback
+
+- 若封存資料缺失：輸出 `gate fail` 並附缺失清單，不進入 Archived。
+
+## Handoff
+
+- 通過後交接：`permanent-memory` 或 `DevFlow Marshal` 進行封存狀態流轉。
