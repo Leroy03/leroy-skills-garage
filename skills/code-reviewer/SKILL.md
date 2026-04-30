@@ -48,3 +48,26 @@ dependencies:
 
 ## 调用方式
 - `$code-reviewer` + 文件/改动范围 +（可选）评审重点
+
+## Contract
+
+- `inputs_required`
+  - `files_or_diff`
+  - `context`
+  - `focus`（可选）
+- `outputs_required`
+  - `issues`
+  - `severity`
+  - `recommendations`
+- `evidence_files`
+  - 无硬性文件（可引用 `test_result.json`）
+
+## Fallback
+
+- 若改动范围过大：先输出高风险摘要，再建议分批评审。
+- 若上下文不足：回交 `context-builder`。
+
+## Handoff
+
+- 交接 `pragmatic-coder` 修复问题。
+- 修复后回到 `verification-before-completion`。
