@@ -93,6 +93,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - 若用户明确要求正式流程，直接升级 `L3 / 🔴`
 - 若信息不足但风险低，先列最小假设再继续
 - 若信息不足且风险高，先补澄清，不直接执行
+- 若任务为 trivial（明显一行修复、纯文案、无行为改动），可直接按 L1 最小链路执行
 
 ## 调用方式
 - `$entry-router` + 用户需求 +（可选）风险/时限/是否正式
