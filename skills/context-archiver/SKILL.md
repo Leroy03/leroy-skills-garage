@@ -52,3 +52,27 @@ dependencies:
 
 ## 调用方式
 - `$context-archiver` + 标题 +（可选）上述细节
+
+## Contract
+
+- `inputs_required`
+  - `title`
+  - `type`
+  - `summary`
+  - `changes`（建议）
+  - `verification`（建议）
+- `outputs_required`
+  - `archive_record`
+  - `changes`
+  - `verification`
+  - `risks`
+- `evidence_files`
+  - `04_delivery.md`（L3 建议）
+
+## Fallback
+
+- 若细节不足：先输出最小记录并标注 `unknown` 字段，提示补充。
+
+## Handoff
+
+- 跨任务可复用信息：交接 `permanent-memory`。
