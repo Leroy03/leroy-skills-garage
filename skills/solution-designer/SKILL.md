@@ -32,3 +32,25 @@ description: "Designs solution options and trade-offs. Invoke when需求不清�
 - dependencies
 - acceptance_criteria
 - rollback_hint
+
+## Contract
+
+- `inputs_required`
+  - `problem_statement`
+  - `constraints`
+  - `success_criteria`
+- `outputs_required`
+  - `options`
+  - `tradeoffs`
+  - `recommended_option`
+  - `handoff_to_task_planner`
+- `evidence_files`
+  - `01_plan.md`（建议在 L2/L3 落地）
+
+## Fallback
+
+- 若信息不足：先列关键假设与待确认问题，不直接给重方案。
+
+## Handoff
+
+- 强制交接：`task-planner`
