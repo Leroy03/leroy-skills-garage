@@ -26,3 +26,31 @@ description: "Defines test matrix and release quality gates. Invoke when需要�
 
 - 任一高优缺陷未闭环 => Gate FAIL。
 - 核心链路无验证证据 => Gate FAIL。
+
+## Contract
+
+- `inputs_required`
+  - `change_scope`
+  - `risk_level`
+  - `existing_evidence`
+- `outputs_required`
+  - `test_matrix`
+  - `entry_exit_criteria`
+  - `release_gate`
+- `evidence_files`
+  - `regression_scope.md`（建议）
+
+## Trigger Policy
+
+- L2 默认不强制，以下场景触发：
+  - 高风险改动
+  - 发布前检查
+  - 跨系统联调
+
+## Fallback
+
+- 若缺证据无法判定：输出 `Gate BLOCKED` 并给补证清单。
+
+## Handoff
+
+- 交接 `verification-before-completion` 做最终完成判定。
