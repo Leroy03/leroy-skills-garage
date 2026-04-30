@@ -31,9 +31,56 @@ description: >-
 - run 的每次状态变化必须写入 `run.json.audit`。
 - 若脚本系统不可用，必须明示并进入逻辑协议模式；不得伪造“已执行脚本”。
 
-## 可选脚本（本仓库）
+## 可选脚本（优先级与回退）
 
-若当前工作区含 `scripts/devflow.py`，优先用它维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名；说明见仓库根目录 `docs/devflow-run-tooling.md`。当前仓库的职责映射见 `docs/devflow-marshal-subagent-scope.md`。
+- 优先级 1：若当前工作区含 `scripts/devflow.py`，优先使用项目脚本维护 `DEVFLOW_ROOT` 下的 `run.json` / `run.json.audit` 与文书文件名。
+- 优先级 2：若工作区缺失项目脚本，允许回退使用全局脚本 `C:/Users/cllin/.codex/scripts/devflow.py`，并在回报中明确标注“使用全局脚本回退模式”。
+- 新项目建议：首次启用时将全局脚本复制到项目 `scripts/devflow.py`，再切回优先级 1，以避免跨项目路径耦合。
+
+## 全局 DevFlow 命令（新增）
+
+- 项目初始化：
+  - `init-project`：初始化 `devflow.project.yaml` 与模板文书
+  - `sync-project`：同步 schema 版本并补齐缺失字段
+- 证据与契约：
+  - `collect-evidence`：执行测试命令并生成 `test_result.json`
+  - `validate-skill-contract`：校验 skill 输出 contract（输入/输出/证据）
+
+## 轻量可观测（新增）
+
+- 事件日志：关键命令追加 `event.jsonl`（start/success/fail、产物路径、失败计数）
+- 门禁报告：`validate-run` 与 `validate-skill-contract` 生成 `gate_reports/*.json`（并保留 `gate_report.json` 兼容指针）
+- 目标：在不增加流程复杂度前提下，提升可追溯与复盘效率
+
+## Contract
+
+- `inputs_required`
+  - `grade_or_level`
+  - `run_context`
+  - `governance_intent`
+- `outputs_required`
+  - `run_id`
+  - `status`
+  - `current_artifacts`
+  - `gate_decision`
+  - `next_step`
+- `evidence_files`
+  - `run.json`
+  - `run.json.audit`
+  - `gate_reports/*.json`
+
+## Fallback
+
+- 若脚本不可用：明确声明并进入逻辑协议模式，不伪造执行结果。
+- 若门禁失败：回退到 `Planned` 或上一可执行状态并附返工项。
+
+## Handoff
+
+- 规划阶段：交接 `task-planner`
+- 执行与质量阶段：交接 `test-evidence-packager`、`skill-contract-checker`
+- 封存阶段：交接 `memory-sync-gate`
+
+说明见仓库根目录 `docs/devflow-run-tooling.md`。当前仓库的职责映射见 `docs/devflow-marshal-subagent-scope.md`。
 
 ## 输出压缩
 
@@ -44,3 +91,10 @@ description: >-
 
 - 在治理协议内，始终遵循最小可行改动与可验证交付。
 - 流程服务于正确性与交付，不做仪式化膨胀。
+
+## Frontend 路由一致性（与 entry-router 对齐）
+
+- 若交付物是产品 UI（网站、落地页、后台、组件、应用页面、交互界面），优先路由 `frontend-design`。
+- 若交付物是演示文稿（多页 slides、演讲稿、Pitch deck、PPT/PPTX 转 HTML、现有 deck 增强），优先路由 `frontend-slides`。
+- 若请求同时包含产品 UI 与简报 deck，必须拆分为两个子任务并分别路由执行，避免单 skill 混跑。
+- 若用户语义不清，仅提“前端展示”，先澄清最终交付物；若语境为演讲/汇报，默认优先 `frontend-slides`。
