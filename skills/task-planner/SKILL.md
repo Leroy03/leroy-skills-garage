@@ -24,6 +24,31 @@ description: "Builds executable WBS, milestones, and acceptance checks. Invoke a
 - `acceptance_criteria`
 - `risk_and_mitigation`
 
+## Contract
+
+- `inputs_required`
+  - `solution_or_goal`
+  - `scope_constraints`（可选）
+  - `timeline_or_priority`（可选）
+- `outputs_required`
+  - `goal`
+  - `wbs`
+  - `milestones`
+  - `acceptance_criteria`
+  - `risk_and_mitigation`
+- `evidence_files`
+  - `01_plan.md`（L2/L3 推荐）
+
+## Fallback
+
+- 若缺少方案输入：先回退请求 `solution-designer` 或按最小假设列出 Draft 计划并标注假设。
+- 若需求边界不清：先输出 `in_scope/out_of_scope` 再继续拆解。
+
+## Handoff
+
+- 默认交接到：`pragmatic-coder`
+- L2/L3 建议追加：`test-evidence-packager`、`skill-contract-checker`
+
 ## Guardrails
 
 - 任务粒度可执行，不写空泛动作。
