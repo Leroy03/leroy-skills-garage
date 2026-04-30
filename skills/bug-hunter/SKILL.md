@@ -48,3 +48,26 @@ dependencies:
 
 ## 调用方式
 - `$bug-hunter` + 现象描述 +（可选）日志/堆栈/复现步骤
+
+## Contract
+
+- `inputs_required`
+  - `symptom`
+  - `logs_or_stacktrace`（建议）
+  - `reproduce_steps`（建议）
+- `outputs_required`
+  - `root_cause`
+  - `solutions`
+  - `verification_plan`
+- `evidence_files`
+  - 无硬性文件（定位型 skill；可引用日志与测试证据）
+
+## Fallback
+
+- 证据不足时：输出候选根因 Top-N 与补证步骤，不给唯一结论。
+- 无法复现时：先给最小可执行观测点与日志增强建议。
+
+## Handoff
+
+- 修复实现交接：`pragmatic-coder`
+- 修复验证交接：`verification-before-completion`
