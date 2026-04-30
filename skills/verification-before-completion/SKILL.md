@@ -35,6 +35,31 @@ description: "Requires evidence before declaring work done. Invoke after impleme
 - `residual_risks`
 - `completion_decision`：pass | partial | fail
 
+## Contract
+
+- `inputs_required`
+  - `change_summary`
+  - `validation_results`
+  - `expected_acceptance`
+- `outputs_required`
+  - `verification_steps`
+  - `evidence`
+  - `residual_risks`
+  - `completion_decision`
+- `evidence_files`
+  - `test_result.json`（L2/L3）
+  - `contract_report.json`（L2/L3）
+
+## Fallback
+
+- 若证据不足：输出 `partial`，并明确缺失项与补证步骤。
+- 若验证失败：输出 `fail`，并回交 `pragmatic-coder` 修复。
+
+## Handoff
+
+- `pass`：可交付或进入下一治理状态。
+- `partial/fail`：回交 `pragmatic-coder`，必要时触发 `qa-gatekeeper`。
+
 ## 分级对齐
 - `⚪/🟢`：至少给出最小验证证据
 - `🟡`：验证结果要能支持进入 `Reviewed`
