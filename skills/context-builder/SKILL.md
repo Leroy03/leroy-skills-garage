@@ -57,3 +57,25 @@ dependencies:
 
 ## 调用方式
 - `$context-builder` + 目标（文件/类/功能）+（可选）线索/约束
+
+## Contract
+
+- `inputs_required`
+  - `target`
+  - `task_type`（可选）
+  - `hints`（可选）
+- `outputs_required`
+  - `core_files`
+  - `dependencies`
+  - `impact_scope`
+  - `risk_level`
+- `evidence_files`
+  - 无硬性文件（上下文型 skill）
+
+## Fallback
+
+- 若索引缺失或过期：声明后执行最小代码搜索并标注置信度。
+
+## Handoff
+
+- 默认交接：`pragmatic-coder` / `code-reviewer` / `bug-hunter`（按任务类型）。
