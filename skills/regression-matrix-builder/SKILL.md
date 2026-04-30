@@ -28,3 +28,24 @@ description: 依改動範圍建立回歸測試矩陣，確保核心流程與高�
 ## 命令映射
 - 當前由 skill 直接產文檔，後續可擴充 `devflow.py build-regression-matrix`。
 - 交接給 `test-evidence-packager` 執行收證。
+
+## Contract
+
+- `inputs_required`
+  - `changed_files`
+  - `impact_scope`
+  - `risk_level`
+  - `existing_test_assets`
+- `outputs_required`
+  - `regression_scope.md`
+  - `regression_matrix.json`（可選）
+- `evidence_files`
+  - `regression_scope.md`
+
+## Fallback
+
+- 若改動資訊不足：先輸出最小回歸清單並標註待補項。
+
+## Handoff
+
+- 交接：`test-evidence-packager` 執行測試與證據收集。
