@@ -40,6 +40,14 @@ description: "Applies anti-overengineering and anti-assumption guardrails. Invok
 - 优化/重构前
 - 代码评审前，作为“是否过度工程化”的检查尺
 
+## 轻量执行提示
+- 简单任务（如明显一行修复、纯文案）可直接执行，不强制完整护栏流程。
+- 非简单任务先给出最小执行计划：
+  - `1) step -> verify`
+  - `2) step -> verify`
+  - `3) step -> verify`
+- 若存在歧义，先提 1~3 个关键澄清问题，再继续。
+
 ## 输出要求
 - `assumptions`
 - `simplest_viable_path`
@@ -53,3 +61,25 @@ description: "Applies anti-overengineering and anti-assumption guardrails. Invok
 
 ## 调用方式
 - `$karpathy-guidelines` + 任务描述
+
+## Contract
+
+- `inputs_required`
+  - `task_description`
+  - `constraints`（可选）
+- `outputs_required`
+  - `assumptions`
+  - `simplest_viable_path`
+  - `scope_guardrails`
+  - `verification_goal`
+- `evidence_files`
+  - 无硬性文件（护栏型 skill）
+
+## Fallback
+
+- 若信息不足且风险高：先提问澄清，不直接执行。
+- 若信息不足但风险低：列最小假设继续，并标注假设边界。
+
+## Handoff
+
+- 默认交接：`task-planner` / `pragmatic-coder` / `bug-hunter` / `code-reviewer`（按任务类型）。
