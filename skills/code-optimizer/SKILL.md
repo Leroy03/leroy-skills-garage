@@ -43,3 +43,26 @@ dependencies:
 
 ## 怎么调用
 - `$code-optimizer` + 目标范围 + 现象 + 约束
+
+## Contract
+
+- `inputs_required`
+  - `target_scope`
+  - `pain_points`
+  - `constraints`
+- `outputs_required`
+  - `issue_list`
+  - `minimal_change_plan`
+  - `verification_checklist`
+- `evidence_files`
+  - `test_result.json`（L2/L3 建议）
+
+## Fallback
+
+- 若收益不明确：降级为不改代码，仅输出观察结论与建议。
+- 若影响面过大：建议拆批优化，先做最小高收益项。
+
+## Handoff
+
+- 方案确认后交接：`pragmatic-coder`
+- 改动完成后交接：`verification-before-completion`
