@@ -191,6 +191,53 @@ def _parse_auto_install_whitelist(raw: str) -> set[str]:
     return {x for x in items if x}
 
 
+def _install_package_with_result(python_exec: str, project_root: Path, package_name: str) -> tuple[bool, str]:
+    proc = subprocess.run(
+        [python_exec, "-m", "pip", "install", package_name],
+        check=False,
+        cwd=str(project_root),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    snippet = (proc.stdout + "\n" + proc.stderr).strip()[-2000:]
+    return proc.returncode == 0, snippet
+
+
+def _append_event(run_dir: Path, event: dict[str, Any]) -> None:
+    run_dir.mkdir(parents=True, exist_ok=True)
+    payload = {"ts": _utc_now_iso(), **event}
+    with (run_dir / "event.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+
+def _write_gate_report(run_dir: Path, gate_name: str, status: str, reasons: list[str], details: dict[str, Any]) -> Path:
+    payload = {
+        "ts": _utc_now_iso(),
+        "gate_name": gate_name,
+        "status": status,
+        "reasons": reasons,
+        "details": details,
+    }
+    reports_dir = run_dir / "gate_reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    path = reports_dir / f"{gate_name}.json"
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Keep a compatibility pointer for legacy readers.
+    (run_dir / "gate_report.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def _load_json_if_exists(path: Path) -> dict[str, Any] | None:
+    if not path.is_file():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+
+
 def cmd_create_run(args: argparse.Namespace) -> None:
     root = devflow_root()
     d = date.today().strftime("%Y%m%d")
@@ -225,6 +272,14 @@ def cmd_create_run(args: argparse.Namespace) -> None:
     }
     (run_dir / "run.json.audit").write_text(
         json.dumps(audit_line, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    _append_event(
+        run_dir,
+        {
+            "command": "create-run",
+            "status": "success",
+            "run_id": run_id,
+        },
     )
     print(run_id)
     print(str(run_dir.resolve()))
@@ -273,6 +328,16 @@ def cmd_update_status(args: argparse.Namespace) -> None:
     }
     with audit_path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(audit_line, ensure_ascii=False) + "\n")
+    _append_event(
+        run_dir,
+        {
+            "command": "update-status",
+            "status": "success",
+            "run_id": args.run_id,
+            "from_status": old,
+            "to_status": args.status,
+        },
+    )
     print("ok")
 
 
@@ -306,6 +371,41 @@ def cmd_validate_run(args: argparse.Namespace) -> None:
         for fname in ("03_dispatch.md", "04_delivery.md", "05_postmortem.md"):
             if not (run_dir / fname).is_file():
                 errors.append(f"status Archived but {fname} missing")
+    review_or_later = {"Reviewed", "Dispatched", "Running", "Delivered", "Archived"}
+    if args.strict_level == "standard" and status in review_or_later:
+        test_result = _load_json_if_exists(run_dir / "test_result.json")
+        if not test_result:
+            errors.append("review+ gate requires test_result.json")
+        else:
+            overall = test_result.get("summary", {}).get("overall_status")
+            if overall != "passed":
+                errors.append(f"review+ gate requires tests passed, got: {overall!r}")
+
+        contract = _load_json_if_exists(run_dir / "contract_report.json")
+        if not contract:
+            errors.append("review+ gate requires contract_report.json")
+        else:
+            contract_status = contract.get("summary", {}).get("status")
+            if contract_status != "passed":
+                errors.append(f"review+ gate requires contract passed, got: {contract_status!r}")
+    gate_status = "passed" if not errors else "failed"
+    gate_path = _write_gate_report(
+        run_dir,
+        "validate-run",
+        gate_status,
+        errors,
+        {"run_id": args.run_id, "status": status},
+    )
+    _append_event(
+        run_dir,
+        {
+            "command": "validate-run",
+            "status": gate_status,
+            "run_id": args.run_id,
+            "artifact": str(gate_path),
+            "error_count": len(errors),
+        },
+    )
     if errors:
         raise SystemExit("validate failed:\n- " + "\n- ".join(errors))
     print("validate ok")
@@ -410,6 +510,7 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
         "coverage": "coverage",
     }
     auto_whitelist = _parse_auto_install_whitelist(args.auto_install_whitelist)
+    dependency_actions: list[dict[str, Any]] = []
     results: list[dict[str, Any]] = []
     total_start = datetime.now(timezone.utc)
     for idx, cmd in enumerate(commands, start=1):
@@ -435,15 +536,35 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
             if missing_module:
                 package_name = module_to_package.get(missing_module, missing_module)
                 if package_name.lower() in auto_whitelist:
-                    _auto_install_package(python_exec, project_root, package_name)
-                    proc = subprocess.run(
-                        cmd_run,
-                        shell=True,
-                        cwd=str(project_root),
-                        capture_output=True,
-                        text=True,
-                        encoding="utf-8",
-                        errors="replace",
+                    installed, install_output = _install_package_with_result(python_exec, project_root, package_name)
+                    dependency_actions.append(
+                        {
+                            "action": "auto_install",
+                            "module": missing_module,
+                            "package": package_name,
+                            "status": "success" if installed else "failed",
+                            "output_snippet": install_output,
+                        }
+                    )
+                    if installed:
+                        proc = subprocess.run(
+                            cmd_run,
+                            shell=True,
+                            cwd=str(project_root),
+                            capture_output=True,
+                            text=True,
+                            encoding="utf-8",
+                            errors="replace",
+                        )
+                else:
+                    dependency_actions.append(
+                        {
+                            "action": "auto_install_skipped",
+                            "module": missing_module,
+                            "package": package_name,
+                            "status": "skipped_not_in_whitelist",
+                            "output_snippet": "",
+                        }
                     )
         ended = datetime.now(timezone.utc)
         duration_ms = int((ended - started).total_seconds() * 1000)
@@ -485,6 +606,7 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
             "overall_status": "passed" if failed == 0 else "failed",
         },
         "commands": results,
+        "dependency_actions": dependency_actions,
         "coverage": {
             "enabled": bool(cfg.get("testing", {}).get("coverage", {}).get("enabled", False)),
             "overall_percent": None,
@@ -498,6 +620,20 @@ def cmd_collect_evidence(args: argparse.Namespace) -> None:
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    event_dir = run_dir if run_dir else (project_root / "devflow")
+    _append_event(
+        event_dir,
+        {
+            "command": "collect-evidence",
+            "status": payload["summary"]["overall_status"],
+            "run_id": args.run_id,
+            "level": args.level,
+            "output": str(output_path),
+            "total_commands": len(results),
+            "failed": failed,
+            "dependency_actions": len(dependency_actions),
+        },
+    )
     print(
         json.dumps(
             {"output": str(output_path), "total_commands": len(results), "passed": passed, "failed": failed},
@@ -520,6 +656,7 @@ def cmd_validate_skill_contract(args: argparse.Namespace) -> None:
     missing_total: list[str] = []
     for skill in args.skill:
         record_path = run_dir / "skill_contract" / f"{skill}.json"
+        record_path.parent.mkdir(parents=True, exist_ok=True)
         item_missing: list[str] = []
         evidence_missing: list[str] = []
         data: dict[str, Any] = {}
@@ -529,7 +666,15 @@ def cmd_validate_skill_contract(args: argparse.Namespace) -> None:
             except json.JSONDecodeError:
                 item_missing.append("invalid_json")
         else:
-            item_missing.append("contract_file_missing")
+            if args.init_missing:
+                data = {
+                    "inputs_required": [],
+                    "outputs_required": [],
+                    "evidence_files": [],
+                }
+                record_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            else:
+                item_missing.append("contract_file_missing")
         for field in required_fields:
             if field not in data:
                 item_missing.append(field)
@@ -563,9 +708,63 @@ def cmd_validate_skill_contract(args: argparse.Namespace) -> None:
     }
     report_path = run_dir / "contract_report.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    missing_reasons = [f"skill contract failed: {x}" for x in missing_total]
+    gate_path = _write_gate_report(
+        run_dir,
+        "validate-skill-contract",
+        report["summary"]["status"],
+        missing_reasons,
+        {"run_id": args.run_id, "skills": args.skill, "report": str(report_path)},
+    )
+    _append_event(
+        run_dir,
+        {
+            "command": "validate-skill-contract",
+            "status": report["summary"]["status"],
+            "run_id": args.run_id,
+            "artifact": str(report_path),
+            "gate_report": str(gate_path),
+            "failed": report["summary"]["failed"],
+        },
+    )
     print(json.dumps({"output": str(report_path), "status": report["summary"]["status"]}, ensure_ascii=False))
     if args.strict and missing_total:
         raise SystemExit("validate-skill-contract failed in strict mode")
+
+
+def cmd_df_init(args: argparse.Namespace) -> None:
+    init_args = argparse.Namespace(project_root=args.project_root, force=args.force)
+    cmd_init_project(init_args)
+
+
+def cmd_df_quick(args: argparse.Namespace) -> None:
+    collect_args = argparse.Namespace(
+        project_root=args.project_root,
+        run_id=args.run_id,
+        level=args.level,
+        stop_on_fail=True,
+        auto_install_missing=args.auto_install_missing,
+        auto_install_whitelist=args.auto_install_whitelist,
+        output=args.output,
+    )
+    cmd_collect_evidence(collect_args)
+    if args.run_id:
+        validate_args = argparse.Namespace(run_id=args.run_id, strict_level="minimal")
+        cmd_validate_run(validate_args)
+
+
+def cmd_df_gate(args: argparse.Namespace) -> None:
+    if args.skill:
+        contract_args = argparse.Namespace(
+            project_root=args.project_root,
+            run_id=args.run_id,
+            skill=args.skill,
+            strict=True,
+            init_missing=args.init_missing,
+        )
+        cmd_validate_skill_contract(contract_args)
+    validate_args = argparse.Namespace(run_id=args.run_id, strict_level="standard")
+    cmd_validate_run(validate_args)
 
 
 def main() -> None:
@@ -599,6 +798,12 @@ def main() -> None:
 
     c5 = sub.add_parser("validate-run", help="Minimal consistency checks")
     c5.add_argument("--run-id", required=True)
+    c5.add_argument(
+        "--strict-level",
+        choices=("minimal", "standard"),
+        default="standard",
+        help="Validation strictness: minimal checks artifact presence only; standard also checks test/contract gates",
+    )
     c5.set_defaults(func=cmd_validate_run)
 
     c6 = sub.add_parser("init-project", help="Initialize devflow.project.yaml and template docs")
@@ -631,7 +836,33 @@ def main() -> None:
     c9.add_argument("--run-id")
     c9.add_argument("--skill", action="append", required=True)
     c9.add_argument("--strict", action="store_true")
+    c9.add_argument("--init-missing", action="store_true", help="Create missing skill contract files with empty template")
     c9.set_defaults(func=cmd_validate_skill_contract)
+
+    c10 = sub.add_parser("df-init", help="Shortcut: initialize devflow project templates")
+    c10.add_argument("--project-root", default=".")
+    c10.add_argument("--force", action="store_true")
+    c10.set_defaults(func=cmd_df_init)
+
+    c11 = sub.add_parser("df-quick", help="Shortcut: collect evidence and optional minimal run validation")
+    c11.add_argument("--project-root", default=".")
+    c11.add_argument("--run-id")
+    c11.add_argument("--level", default="L2")
+    c11.add_argument("--auto-install-missing", action="store_true")
+    c11.add_argument(
+        "--auto-install-whitelist",
+        default="pytest,pytest-cov,coverage",
+        help="Comma-separated pip package whitelist for auto install",
+    )
+    c11.add_argument("--output")
+    c11.set_defaults(func=cmd_df_quick)
+
+    c12 = sub.add_parser("df-gate", help="Shortcut: strict contract check and standard run gate")
+    c12.add_argument("--project-root", default=".")
+    c12.add_argument("--run-id", required=True)
+    c12.add_argument("--skill", action="append", help="Skill name to validate contract; can pass multiple")
+    c12.add_argument("--init-missing", action="store_true", help="Create missing skill contract files before check")
+    c12.set_defaults(func=cmd_df_gate)
 
     args = p.parse_args()
     args.func(args)
