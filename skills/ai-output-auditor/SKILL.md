@@ -27,3 +27,26 @@ description: "Audits AI output for correctness, consistency, and risk. Invoke wh
 - 事实错误与逻辑矛盾
 - 与项目约束不一致
 - 安全/合规/可维护性风险
+
+## Contract
+
+- `inputs_required`
+  - `target_output`
+  - `reference_constraints`
+  - `expected_quality_bar`
+- `outputs_required`
+  - `audit_summary`
+  - `issues`
+  - `fix_suggestions`
+  - `confidence`
+- `evidence_files`
+  - 无硬性文件（审校型 skill）
+
+## Fallback
+
+- 若参考依据不足：明确标注低置信度与待补材料，不给绝对结论。
+
+## Handoff
+
+- 发现问题：回交对应生产 skill（如 `solution-designer`、`pragmatic-coder`）。
+- 无阻断问题：交接 `verification-before-completion`。
