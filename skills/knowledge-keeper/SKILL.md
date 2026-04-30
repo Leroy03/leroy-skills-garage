@@ -51,3 +51,27 @@ description: "Maintains reusable project knowledge indexes and lookup hints. Inv
 - 使用：`python .\scripts\update_knowledge_index.py`
 - 刷新后应更新 `docs/indexes/00-文件树索引.md`
 - 刷新后应更新 `docs/indexes/01-知识库索引.md`
+
+## Contract
+
+- `inputs_required`
+  - `target`
+  - `intent`（可选）
+  - `hints`（可选）
+- `outputs_required`
+  - `entry_points`
+  - `related_files`
+  - `commands`
+  - `docs`
+  - `confidence`
+- `evidence_files`
+  - 无硬性文件（索引型 skill）
+
+## Fallback
+
+- 若索引缺失或过期：先标注 `confidence=low`，并给出刷新建议。
+- 若无法定位：返回 Top-N 候选入口与排查顺序。
+
+## Handoff
+
+- 默认交接：`context-builder`，必要时交接 `requirement-locator`。
