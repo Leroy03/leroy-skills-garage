@@ -44,3 +44,27 @@ dependencies:
 
 ## 调用方式
 - `$pragmatic-coder` + 任务描述 +（可选）目标文件/模块 + 约束
+
+## Contract
+
+- `inputs_required`
+  - `task`
+  - `context`
+  - `constraints`（可选）
+- `outputs_required`
+  - `changed_files`
+  - `key_changes`
+  - `validation_steps`
+  - `residual_risks`
+- `evidence_files`
+  - `test_result.json`（L2/L3 建议）
+
+## Fallback
+
+- 需求边界不清：回交 `solution-designer` 或 `task-planner`。
+- 缺少关键上下文：先调用 `context-builder` 补齐再编码。
+
+## Handoff
+
+- 默认交接：`verification-before-completion`
+- L2/L3 衔接：`test-evidence-packager` -> `skill-contract-checker`
