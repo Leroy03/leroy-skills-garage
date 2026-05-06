@@ -13,7 +13,8 @@
 
 - `superpowers`：提供完整 workflow、TDD、调试、review、并行执行等工程技能编排
 - `andrej-karpathy-skills`：提供轻量但高价值的执行护栏，重点防止乱猜、过度工程和越界修改
-- 本仓库的融合思路：`Karpathy` 负责约束执行风格，`Superpowers` 负责补强关键 workflow，而 `DevFlow` 负责按 `⚪/🟢/🟡/🔴` 控制流程重量
+- `ruvnet/ruflo`：提供插件分层、能力清单、状态页、验证脚本与运行预算的工程化参考
+- 本仓库的融合思路：`Karpathy` 负责约束执行风格，`Superpowers` 负责补强关键 workflow，`Ruflo` 负责启发可验证的包级组织，而 `DevFlow` 负责按 `⚪/🟢/🟡/🔴` 控制流程重量
 
 ## 模型兼容结论
 
@@ -38,6 +39,25 @@
 - `ambiguity`：low / medium / high
 - `governance`：none / review_needed / formal_required
 - 建议：模型先判定四个轴，再落到 `L0-L3`，最后再映射到 `⚪/🟢/🟡/🔴`
+
+
+## Ruflo 借鉴边界
+
+- 借鉴：插件包分层、能力 manifest、状态页、验证脚本、预算/安全字段。
+- 不借鉴：全量 swarm、后台 worker、自学习运行时、联邦通信、重型 MCP 平台化。
+- 合并原则：先让现有 skills 可枚举、可校验、可路由，再考虑新增能力。
+
+## 能力包
+
+能力包定义在 `skills.packages.json`，用于把 flat skills 组织成可验证的最小包：
+
+- `core-flow`：入口分流、执行护栏、最小实现、完成前验证。
+- `planning-flow`：方案、任务拆解、上下文和需求定位。
+- `quality-gates`：测试证据、合同检查、回归矩阵、代码评审与交付门禁。
+- `governance-flow`：DevFlow 状态机、正式编排、记忆门禁和沉淀。
+- `implementation-specialists`：调试、优化、TDD、知识维护和日报总结。
+
+运行 `python scripts/validate_skills.py --write-status docs/STATUS.md` 可刷新当前能力状态。
 
 ## 技能地图
 
@@ -133,7 +153,7 @@
 
 ## 支撑资产
 
-- 协作协议：`protocols/collaboration-protocol.yaml`
+- 协作协议：`skills/collaboration-protocol.yaml`
 - 知识索引脚本：`scripts/update_knowledge_index.py`
 - 知识索引输出：`docs/indexes/00-文件树索引.md`、`docs/indexes/01-知识库索引.md`
 - DevFlow 协议：`inject/devflow-marshal-context.md`
@@ -149,6 +169,7 @@
 - 先分级，再进流程
 - 先约束行为，再扩大执行
 - 文本与代码文件默认使用 UTF-8（no BOM）
+- 能力新增前先更新 `skills.packages.json` 与 `scripts/validate_skills.py` 的验证预期
 - 结构化 handoff 优先于自由发挥
 - 稳定知识回仓优先于每次重新搜索
 - 先修一致性，再加新 skill
