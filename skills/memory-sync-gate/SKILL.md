@@ -8,6 +8,7 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 ## 何時使用
 - Delivered 到 Archived 前。
 - 重大改動或正式流程封存前。
+- 日常 L1/L2 不預設啟用；避免和 `context-archiver`、`permanent-memory` 重複沉澱。
 
 ## 輸入
 - `run_id`
@@ -51,3 +52,9 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 ## Handoff
 
 - 通過後交接：`permanent-memory` 或 `DevFlow Marshal` 進行封存狀態流轉。
+
+## 與其他記憶技能的邊界（新增）
+
+- `context-archiver`：單次任務摘要（本次改動、驗證、風險），可在 L1/L2 使用。
+- `permanent-memory`：跨任務穩定復用的長期事實（約定/接口/命令/回滾策略）。
+- `memory-sync-gate`：封存前門禁，只負責檢查沉澱完整性與可追溯性，不產生實作方案。
