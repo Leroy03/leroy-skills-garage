@@ -97,6 +97,17 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - 若用户明确要求实现、修复或做完，`execution_mode=execute_after_gate`
 - 若信息不足且判断卡在 `L1/L2` 之间，默认先按 `L2` 做最小规划
 
+## 高歧义先澄清（路由）
+
+触发条件（满足任一即可）：
+- `ambiguity=high`
+- 用户需求描述少于 3 句且包含实现请求
+- 关键验收标准缺失（“做完”定义不清）
+
+处理方式：
+- 先路由 `grill-lite` 做 5-8 题澄清，再回到本 skill 进行分级与执行。
+- 若用户无法完整回答，按最小假设执行并在输出中显式标注假设清单。
+
 ## 轻量优先规则
 - 若存在 `L1 / 🟢` 可完成路径，不默认升级到 `L2 / 🟡`
 - 若用户明确要求正式流程，直接升级 `L3 / 🔴`
