@@ -30,6 +30,8 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - `recommended_skills`：建议调用链
 - `required_checks`：本轮至少要完成的验证或门禁
 - `stop_point`：做到哪里就该停下来等确认
+- `execution_mode`：`plan_only | execute_after_gate | formal_state_machine`
+- `execution_budget`：`tiny | normal | extended`
 
 ## Contract
 
@@ -55,6 +57,10 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - `risk`：low | medium | high
 - `ambiguity`：low | medium | high
 - `governance`：none | review_needed | formal_required
+- `execution_budget`：tiny | normal | extended
+- `agent_budget`：0 | 1 | parallel
+- `data_sensitivity`：normal | sensitive
+- `destructive_risk`：none | reversible | irreversible
 
 ## 分级规则
 
@@ -66,6 +72,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 ### `L1 / 🟢 快奏 / minimal`
 - 适用：单文件、小范围修复、明确实现
 - 默认链路：`karpathy-guidelines` -> `knowledge-keeper`（可选） -> `context-builder`（可选） -> `pragmatic-coder` -> `verification-before-completion`
+- 个人效率规则：当任务为明确单文件、低风险、低歧义时，可跳过 `karpathy-guidelines`，但不得跳过 `verification-before-completion`
 - 停点：验证完成即可
 
 ### `L2 / 🟡 常奏 / planned`
@@ -86,6 +93,8 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - 若任务是纯说明、纯问答、纯建议，进入 `L0 / ⚪`
 - 若 `scope=单文件` 且 `risk=low` 且 `ambiguity=low`，进入 `L1 / 🟢`
 - 若涉及多文件、需轻规划、需评审或风险中等，进入 `L2 / 🟡`
+- 若用户只要求方案/评估/拆解，`execution_mode=plan_only`
+- 若用户明确要求实现、修复或做完，`execution_mode=execute_after_gate`
 - 若信息不足且判断卡在 `L1/L2` 之间，默认先按 `L2` 做最小规划
 
 ## 轻量优先规则
@@ -94,6 +103,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - 若信息不足但风险低，先列最小假设再继续
 - 若信息不足且风险高，先补澄清，不直接执行
 - 若任务为 trivial（明显一行修复、纯文案、无行为改动），可直接按 L1 最小链路执行
+- 若任务存在明显不确定性（方案未定/成本未知/依赖未知），先走 Spike 决策再进入实现链路
 
 ## 调用方式
 - `$entry-router` + 用户需求 +（可选）风险/时限/是否正式
@@ -116,7 +126,29 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
   - `skill-contract-checker` -> `validate-skill-contract`
 - 输出中建议明确：
   - `required_checks` 是否包含 `test_result.json`
+  - `execution_mode` 是 `plan_only` 还是 `execute_after_gate`
   - `stop_point` 前是否必须通过门禁校验
+
+## Spike 调研补位（个人流程缺口）
+
+当需求不清、方案分歧或预估成本不稳定时，先进入轻量 Spike（默认 30-90 分钟）：
+
+- `timebox`：本轮调研时限
+- `options`：2-3 个可行方案（含约束）
+- `recommendation`：推荐路径与理由
+- `stop`：是否进入实现（yes/no）
+
+若 `stop=no`，保持 `execution_mode=plan_only`；若 `stop=yes`，回到分级规则继续执行。
+
+## 依赖变更最小门禁（个人流程缺口）
+
+只要涉及新增/升级依赖，`required_checks` 至少追加：
+
+- `changelog_checked`：已阅读关键变更说明
+- `direct_verification`：已执行直接相关验证
+- `rollback_note`：已记录回滚方案或降级路径
+
+若改动涉及安全、权限、金流或发布关键链路，自动追加 `code-reviewer` 与 `qa-gatekeeper`。
 
 ## Frontend 专项分流
 
