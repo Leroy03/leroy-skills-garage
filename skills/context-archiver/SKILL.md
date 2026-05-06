@@ -49,6 +49,7 @@ dependencies:
 - `context-archiver`：记录本次任务的结论、改动点、验证与风险
 - `permanent-memory`：只沉淀跨任务稳定复用的约定、接口、命令、回滚策略
 - 当一条结论满足“下次大概率还会复用”时，再升级写入 `memory/永久记忆库.md`
+- `memory-sync-gate`：仅用于 Delivered -> Archived 或重大封存前门禁，不作为日常记录入口
 
 ## 调用方式
 - `$context-archiver` + 标题 +（可选）上述细节
