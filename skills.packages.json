@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "packages": [
+    {
+      "name": "core-flow",
+      "description": "Lightweight default path for routing, execution guardrails, small implementation, and completion evidence.",
+      "level_range": [
+        "L0",
+        "L1"
+      ],
+      "skills": [
+        "entry-router",
+        "karpathy-guidelines",
+        "pragmatic-coder",
+        "verification-before-completion"
+      ],
+      "verify": "python scripts/validate_skills.py --pack core-flow"
+    },
+    {
+      "name": "planning-flow",
+      "description": "Bounded planning and context construction for multi-file but controlled work.",
+      "level_range": [
+        "L2"
+      ],
+      "skills": [
+        "solution-designer",
+        "task-planner",
+        "context-builder",
+        "requirement-analyst",
+        "requirement-locator"
+      ],
+      "verify": "python scripts/validate_skills.py --pack planning-flow"
+    },
+    {
+      "name": "quality-gates",
+      "description": "Verification, regression, contract, audit, and release-readiness gates.",
+      "level_range": [
+        "L2",
+        "L3"
+      ],
+      "skills": [
+        "test-evidence-packager",
+        "skill-contract-checker",
+        "qa-gatekeeper",
+        "regression-matrix-builder",
+        "code-reviewer",
+        "ai-output-auditor",
+        "delivery-tracker"
+      ],
+      "verify": "python scripts/validate_skills.py --pack quality-gates"
+    },
+    {
+      "name": "governance-flow",
+      "description": "Formal DevFlow state machine, orchestration, memory gate, and archival path.",
+      "level_range": [
+        "L3"
+      ],
+      "skills": [
+        "devflow-marshal",
+        "dev-flow-orchestrator",
+        "memory-sync-gate",
+        "context-archiver",
+        "permanent-memory"
+      ],
+      "verify": "python scripts/validate_skills.py --pack governance-flow"
+    },
+    {
+      "name": "implementation-specialists",
+      "description": "Focused execution skills selected by context after routing.",
+      "level_range": [
+        "L1",
+        "L2"
+      ],
+      "skills": [
+        "bug-hunter",
+        "code-optimizer",
+        "tdd-lite",
+        "knowledge-keeper",
+        "daily-qa-work-summary"
+      ],
+      "verify": "python scripts/validate_skills.py --pack implementation-specialists"
+    }
+  ]
+}
