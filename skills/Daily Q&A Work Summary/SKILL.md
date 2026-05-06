@@ -49,3 +49,26 @@ description: "Summarizes today's Q&A and completed work in numbered-title format
 - 结论必须可追溯到当天对话事实。
 - 不编造未执行的动作。
 - 优先写“结果 + 影响”，其次再写过程。
+
+
+## Contract
+
+- `inputs_required`
+  - 当天对话或待总结内容
+  - 已完成动作与可引用结果
+- `outputs_required`
+  - 编号标题
+  - 子条列日志
+  - 变更文件与验证动作（如适用）
+- `evidence_files`
+  - 无硬性文件（日总结型 skill）
+
+## Fallback
+
+- 信息不足时，明确标注“仅基于当前可见上下文”，不补写未发生事项。
+- 无代码或验证动作时，省略对应条目或标注“无”。
+
+## Handoff
+
+- 默认交接到用户确认或 `context-archiver`。
+- 若总结中发现可复用约定，建议交接到 `permanent-memory`。
