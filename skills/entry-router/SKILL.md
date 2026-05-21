@@ -1,6 +1,6 @@
 ---
 name: "entry-router"
-description: "Routes incoming work to the lightest valid workflow. Invoke at the start of non-trivial tasks to classify ⚪/🟢/🟡/🔴 and select the right skills."
+description: "Routes incoming work to the lightest valid workflow. At non-trivial tasks, run grill-lite when unclear, then classify ⚪/🟢/🟡/🔴 and select skills."
 ---
 
 # Entry Router（入口分流）
@@ -32,6 +32,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - `stop_point`：做到哪里就该停下来等确认
 - `execution_mode`：`plan_only | execute_after_gate | formal_state_machine`
 - `execution_budget`：`tiny | normal | extended`
+- `grill_required`：`yes | no`（是否必须先走 `grill-lite`）
 
 ## Contract
 
@@ -44,6 +45,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
   - `recommended_skills`
   - `required_checks`
   - `stop_point`
+  - `grill_required`
 - `evidence_files`
   - 无硬性文件（决策型 skill）
 
@@ -62,6 +64,31 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - `data_sensitivity`：normal | sensitive
 - `destructive_risk`：none | reversible | irreversible
 
+## Step 0：澄清门（优先于分级）
+
+**凡进入本 skill，先按下列规则判断是否 `grill_required=yes`；满足任一即必须先调 `grill-lite`，再回来做 L0-L3 分级。**
+
+### 必触发 `grill-lite`（默认 yes）
+
+- 用户要求实现/修复/重构/优化/新增功能，但未给出可观察验收标准
+- 需求含模糊词：`大概`、`尽量`、`看看`、`类似`、`优化一下`、`改好一点`
+- `ambiguity` 为 `medium` 或 `high`（默认倾向 `medium`，不要因“写得长”就判 `low`）
+- 多文件或跨模块，且未说明 in/out 边界
+- 新功能或行为变更，用户未说明「不做什么」
+- 用户说「你看着办」「按最佳实践」
+
+### 可跳过 `grill-lite`（`grill_required=no`）
+
+- `L0` 纯问答、解释、对比方案（无改代码）
+- 明确单点修复：已给文件路径 + 现象 + 期望结果 + 验证方式
+- 用户显式说「不要问，直接做」且风险为 low
+
+### 输出要求
+
+- `grill_required=yes` 时，`recommended_skills` **第一项必须是** `grill-lite`
+- 澄清后若 `execution_readiness=blocked`，停止实现，只回报缺失项
+- 澄清后若 `partial`，在 `reasoning` 中列出假设清单再继续
+
 ## 分级规则
 
 ### `L0 / ⚪ 口谕 / direct`
@@ -77,7 +104,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 
 ### `L2 / 🟡 常奏 / planned`
 - 适用：多文件但边界清楚，有规划/评审需求
-- 默认链路：`karpathy-guidelines` -> `solution-designer`（如需） -> `task-planner` -> `context-builder`（可选） -> `pragmatic-coder` -> `test-evidence-packager` -> `skill-contract-checker` -> `verification-before-completion`
+- 默认链路：`grill-lite`（若 `grill_required=yes`） -> `karpathy-guidelines` -> `solution-designer`（如需） -> `task-planner` -> `context-builder`（可选） -> `pragmatic-coder` -> `test-evidence-packager` -> `skill-contract-checker` -> `verification-before-completion`
 - 测试与证据：默认加入 `test-evidence-packager`，并要求输出 `test_result.json`
 - 风险触发：仅在高风险、发布前或跨系统联调时追加 `qa-gatekeeper` 与 `code-reviewer`
 - 停点：`Reviewed=Approved`
@@ -96,17 +123,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 - 若用户只要求方案/评估/拆解，`execution_mode=plan_only`
 - 若用户明确要求实现、修复或做完，`execution_mode=execute_after_gate`
 - 若信息不足且判断卡在 `L1/L2` 之间，默认先按 `L2` 做最小规划
-
-## 高歧义先澄清（路由）
-
-触发条件（满足任一即可）：
-- `ambiguity=high`
-- 用户需求描述少于 3 句且包含实现请求
-- 关键验收标准缺失（“做完”定义不清）
-
-处理方式：
-- 先路由 `grill-lite` 做 5-8 题澄清，再回到本 skill 进行分级与执行。
-- 若用户无法完整回答，按最小假设执行并在输出中显式标注假设清单。
+- 若信息不足且用户要求改代码，优先 `grill_required=yes`，不要静默假设后直接实现
 
 ## 轻量优先规则
 - 若存在 `L1 / 🟢` 可完成路径，不默认升级到 `L2 / 🟡`
@@ -121,7 +138,7 @@ description: "Routes incoming work to the lightest valid workflow. Invoke at the
 
 ## Fallback
 
-- 信息不足时，默认在 `L1/L2` 间先取 `L2` 并标注最小假设。
+- 信息不足且要改代码时：先 `grill-lite`；仍不足再在 `L1/L2` 间取 `L2` 并标注最小假设。
 - 用户对分级有异议时，立即上调，不争辩。
 
 ## Handoff
