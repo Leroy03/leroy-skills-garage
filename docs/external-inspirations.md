@@ -99,15 +99,17 @@
 - `tdd` 思想的轻量化落地：`skills/tdd-lite/SKILL.md`
 - “小 skill、可组合、不过度流程化”的总方向：`entry-router` 的轻重分级
 - 将验证作为完成前硬步骤：`verification-before-completion`
+- grilling 轻量化：`skills/grill-lite/SKILL.md`，由 `entry-router` 的 `grill_required` 门控触发
 
 ### 部分融入
 - 共享领域语言思路已有对应能力，但未采用 Matt 的原生命名与模板：
   - `knowledge-keeper`
   - `context-builder`
   - `permanent-memory`
+- 完整 `grill-with-docs`（同步更新 `CONTEXT.md` + ADR）未引入，仅保留轻量澄清门
 
 ### 尚未明显融入
-- grilling 双技能（`grill-me` / `grill-with-docs`）的专门入口
+- `grill-me` 非代码场景的独立入口（可用 `grill-lite` 替代）
 - `diagnose` 风格的标准化排查循环（目前主要由 `bug-hunter` 覆盖）
 - `to-prd` / `triage` 这类 issue-first 交付链路
 
