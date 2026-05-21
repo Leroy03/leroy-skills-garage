@@ -4,7 +4,7 @@
 
 ## 執行順序
 1. 遵循即時指令與限制。
-2. 先走 `entry-router` 分級（L0/L1/L2/L3）。
+2. 先走 `entry-router`；若 `grill_required=yes`，**必先** `grill-lite` 再分級。
 3. 依分級選 skill，避免過度流程化。
 
 ## 分級速記
@@ -19,7 +19,8 @@
 - 發版前：`test-evidence-packager` -> `qa-gatekeeper`（必要時） -> `delivery-tracker`
 
 ## 個人缺口補位
-- Spike 先行：需求不清先產出 `timebox/options/recommendation/stop`。
+- 澄清先行：要改代碼且驗收不清 -> `grill-lite`（5-8 題），再進 L1/L2。
+- Spike 先行：方案未定/成本未知先產出 `timebox/options/recommendation/stop`。
 - 依賴門禁：新增/升級依賴需 changelog、直接驗證、回滾說明。
 - 記憶分層：`context-archiver`（單次）/`permanent-memory`（長期）/`memory-sync-gate`（封存前）。
 
