@@ -1,6 +1,6 @@
 ---
 name: "grill-lite"
-description: "轻量澄清提问门：在高歧义任务开始前，通过 5-8 个问题快速对齐目标、范围、验收与停点。"
+description: "Invoke before coding when requirements are vague: 5-8 questions to align goal, scope, acceptance, and stop point. Called by entry-router when grill_required=yes."
 ---
 
 # Grill-Lite（轻量澄清门）
@@ -8,10 +8,11 @@ description: "轻量澄清提问门：在高歧义任务开始前，通过 5-8 �
 ## 目标
 在需求描述不完整、验收标准不明确时，用最少问题快速对齐，避免返工与误解后再编码。
 
-## 何时调用
-- `entry-router` 判断 `ambiguity=high` 时
-- 用户需求少于 3 句但要求直接实现
-- 目标、范围、验收、停点任一不清晰时
+## 何时调用（默认积极触发）
+- `entry-router` 输出 `grill_required=yes` 时（**必须先于** `pragmatic-coder` / `task-planner`）
+- 用户要改代码但未给验收标准、边界、或停点
+- 需求含「大概/尽量/看看/优化一下/你看着办」等模糊表述
+- 多文件/新功能且 in/out 未说明
 - 显式调用：`$grill-lite`
 
 ## 不做
