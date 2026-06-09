@@ -53,6 +53,37 @@
 
 操作细节见 `docs/change-lifecycle.md`。
 
+## 工作流改造进展
+
+当前已经完成第一轮 `spec-first-devflow` 可执行切片：
+
+| 领域 | 当前状态 | 证据 |
+| --- | --- | --- |
+| Change / Spec 主轴 | 已落地 `changes/`、`changes/templates/`、`specs/` | `changes/templates/*`、`specs/change-lifecycle/spec.md` |
+| Change 生命周期 | 已有最小操作手册 | `docs/change-lifecycle.md` |
+| 总计划落盘 | 已把融合计划放入 docs 入口 | `docs/spec-first-devflow-fusion-plan.md` |
+| DevFlow 工具 | 已支持 change-aware 命令 | `init-change`、`validate-change`、`link-change`、`archive-change`、`sync-spec-index` |
+| Run / Change 绑定 | 已用真实 L2 切片跑通 | `devflow/20260609_leroy-skills-garage_spec-first-devflow-fusion-first-slice/` |
+| Spec / Change 索引 | 已可刷新索引 | `docs/indexes/02-spec-change-index.md` |
+| Planning skills 对齐 | 已默认指向 `changes/<change-id>/proposal.md`、`design.md`、`tasks.md` | `requirement-analyst`、`solution-designer`、`task-planner`、`requirement-locator` |
+| Governance skills 对齐 | 已要求 L2/L3 gate 前检查 change artifacts | `entry-router`、`DevFlow Marshal`、`inject/devflow-marshal-context.md` |
+| Memory 边界 | 已禁止把 change 正文复制进 memory | `context-archiver`、`permanent-memory`、`memory-sync-gate` |
+
+本轮验证证据：
+
+- `python -m py_compile .\scripts\devflow.py`
+- `python .\scripts\devflow.py --help`
+- `python .\scripts\devflow.py validate-change --change-id 20260609-spec-first-devflow-fusion-first-slice`
+- `python .\scripts\devflow.py validate-run --run-id 20260609_leroy-skills-garage_spec-first-devflow-fusion-first-slice --strict-level minimal`
+- `python .\scripts\validate_skills.py`
+
+已知状态：
+
+- `validate-change` 与 DevFlow minimal run gate 已通过。
+- 4 个高度重叠的 PUA 风格 skills 已合并为 `high-pressure-pua`，并补齐 `Contract/Fallback/Handoff`。
+- `python .\scripts\validate_skills.py` 已通过。
+- 下一阶段建议扩展 `specs/governance-lifecycle`、`specs/skill-contract`、`specs/test-evidence`、`specs/memory-boundary`。
+
 ## 分级判定轴
 
 - `scope`：只读 / 单文件 / 多文件 / 跨系统
@@ -80,38 +111,82 @@
 
 运行 `python scripts/validate_skills.py --write-status docs/STATUS.md` 可刷新当前能力状态。
 
-## 技能地图
+## 完整 Skills 介绍
 
-### 方案与规划
+### Core Flow
 
-- `entry-router`：入口分流，先判断该走哪种轻重流程
-- `solution-designer`：需求澄清、方案对比、推荐方案
-- `task-planner`：把方案转成 WBS、里程碑、验收与风险
-- `dev-flow-orchestrator`：面向跨阶段、跨角色的端到端流程编排
-- `DevFlow Marshal`：治理入口，负责分级、状态机、门禁与文书纪律
+日常默认入口，用于最小流程下完成路由、约束、实现与完成前验证。
 
-### 上下文与知识
+| Skill | 作用 | 典型触发 | 主要产出 |
+| --- | --- | --- | --- |
+| `entry-router` | 判断 `L0/L1/L2/L3`、是否需要 `grill-lite`、是否需要 `change-id` | 所有非闲聊任务入口 | level、grade、推荐链路、required checks、artifact mode |
+| `grill-lite` | 在需求模糊时先问 5-8 个关键问题 | 验收不清、范围不清、用户说“优化一下” | 澄清答案、假设、stop point |
+| `karpathy-guidelines` | 约束执行风格，防止乱猜、过度工程、越界改动 | 编码、调试、优化、评审前 | 简化后的执行原则与风险提醒 |
+| `pragmatic-coder` | 做最小、清晰、可验证的实现 | 边界明确的改动 | 代码改动、验证说明 |
+| `verification-before-completion` | 完成前要求证据与 `completion_decision` | 宣告完成前 | verification evidence、completion_decision |
 
-- `knowledge-keeper`：维护稳定入口、文档、命令与仓库约定索引
-- `context-builder`：把任务转成核心文件、依赖、影响面与回归点
-- `context-archiver`：沉淀本次任务的结论、改动与验证方式
-- `permanent-memory`：沉淀跨任务长期复用的稳定知识
+### Planning Flow
 
-### 实作与分析
+用于 L2 及以上的需求分析、方案选择、任务拆解与代码落点定位。Spec-first 后默认写入 `changes/<change-id>/`。
 
-- `karpathy-guidelines`：全局执行护栏，防止乱猜、过度设计与越界改动
-- `pragmatic-coder`：最小改动、够用即可、可验证的务实实现
-- `tdd-lite`：轻量测试先行，只在高风险改动时补最小保护测试
-- `bug-hunter`：问题定位、根因分析、修复方案
-- `code-reviewer`：正确性、安全、性能与可维护性评审
-- `code-optimizer`：针对明确目标做最小优化或重构
-- `verification-before-completion`：完成前验证，要求证据而不是口头完成
+| Skill | 作用 | 典型触发 | L2/L3 默认产物 |
+| --- | --- | --- | --- |
+| `requirement-analyst` | 分析自然语言需求，明确范围、验收、风险与测试建议 | 需求分析、拆任务、列验收 | `changes/<change-id>/proposal.md` |
+| `solution-designer` | 给出 2-3 个方案、权衡与推荐路径 | 方案选择、技术选型、需求不清 | `changes/<change-id>/design.md` |
+| `task-planner` | 把方案转成 WBS、里程碑、验收与验证计划 | 已有方案，需要执行计划 | `changes/<change-id>/tasks.md` |
+| `context-builder` | 构建任务上下文、影响面、依赖、测试面 | 改动前需要理解代码和风险 | context map、impact scope、regression points |
+| `requirement-locator` | 从需求定位代码入口、修改点与影响面 | “这功能在哪”“应该改哪里” | affected files/modules，补入 design/tasks |
 
-### 质量与交付
+### Quality Gates
 
-- `qa-gatekeeper`：测试矩阵、回归范围、发布门禁
-- `ai-output-auditor`：对 AI 生成结果做事实、一致性与风险审校
-- `delivery-tracker`：交付前检查、验证路径与回滚方案
+用于把“我觉得完成了”变成可审计证据，覆盖测试、contract、回归、评审与交付门禁。
+
+| Skill | 作用 | 典型触发 | 主要产出 |
+| --- | --- | --- | --- |
+| `test-evidence-packager` | 执行测试命令并生成标准测试证据 | L2/L3 gate、交付前 | `test_result.json` |
+| `skill-contract-checker` | 检查 skill 输出是否满足 contract | L2/L3 gate、流程审查 | `contract_report.json`、gate report |
+| `qa-gatekeeper` | 定义测试矩阵、回归范围、发布质量门禁 | 发布前、风险较高改动 | QA gate verdict、测试矩阵 |
+| `regression-matrix-builder` | 根据改动范围建立回归测试矩阵 | 核心路径改动、防回归 | P0/P1/P2 regression scope |
+| `code-reviewer` | 审查正确性、安全、性能与可维护性 | PR 前、关键改动后 | findings、风险、修复建议 |
+| `ai-output-auditor` | 审校 AI 生成内容的一致性、事实与风险 | 方案、代码、文案需要二次审计 | audit verdict、问题清单 |
+| `delivery-tracker` | 交付前检查验证路径、回滚与剩余风险 | 准备交付或发布 | delivery checklist、rollback note |
+
+### Governance Flow
+
+用于正式治理、跨阶段编排、状态机、封存与记忆边界控制。
+
+| Skill | 作用 | 典型触发 | 主要产出 |
+| --- | --- | --- | --- |
+| `devflow-marshal` / `DevFlow Marshal` | DevFlow 治理入口，负责分级、状态机、review gate 与文书纪律 | 走流程、立案、归档、正式治理 | run 状态、gate decision、artifact discipline |
+| `dev-flow-orchestrator` | 编排端到端需求到交付流程 | 跨阶段、跨角色、多步骤任务 | workflow plan、handoff |
+| `memory-sync-gate` | Delivered 到 Archived 前检查沉淀完整性与边界 | 正式归档、重大改动封存 | memory gate verdict |
+| `context-archiver` | 沉淀单次任务摘要、改动、验证、风险 | Bug/功能/优化完成后 | archive record |
+| `permanent-memory` | 写入跨任务稳定复用的长期知识 | 约定、接口、命令、回滚策略稳定后 | `memory/永久记忆库.md` 与索引 |
+
+### Implementation Specialists
+
+用于执行阶段的专项能力，按实际问题选择，不要求每次全跑。
+
+| Skill | 作用 | 典型触发 | 主要产出 |
+| --- | --- | --- | --- |
+| `bug-hunter` | 复现、定位根因、提出修复方案 | Bug 排查、异常定位 | root cause、fix plan |
+| `code-optimizer` | 针对明确目标做最小优化或重构 | 性能、可读性、维护性目标明确 | scoped refactor、before/after rationale |
+| `tdd-lite` | 为高风险核心逻辑补轻量测试先行 | 核心逻辑、防回归 | minimal tests、red/green evidence |
+| `knowledge-keeper` | 维护稳定入口、命令、索引与仓库约定 | 更新索引、沉淀入口信息 | docs/indexes、lookup hints |
+| `daily-qa-work-summary` | 汇总当天 Q&A 与完成工作 | 日报、交接、工作回顾 | numbered work summary |
+
+### High-Pressure PUA Skill
+
+这是“防摆烂/防空转”的风格化督促技能，只在代理明显重复失败、想空口收工、拒绝查证或用户明确要求加压时使用。首次尝试且仍在有效推进时不要触发。
+
+| Skill | 模式 | 风格 | 使用边界 |
+| --- | --- | --- |
+| `high-pressure-pua` | `bahamut` | 巴哈资深网友嘴炮感 | 阻止装懂、基础没做完就乱冲 |
+| `high-pressure-pua` | `dcard` | Dcard 阴阳怪气拆台感 | 阻止云判断、重复空转 |
+| `high-pressure-pua` | `ptt` | PTT 酸民反串感 | 阻止硬拗同一路线、空口收工 |
+| `high-pressure-pua` | `kaobei` | 台湾靠北黑特感 | 阻止装忙、甩锅、不验证 |
+
+原本 4 个高度重叠的 PUA skills 已收敛为一个 skill，统一使用相同 trigger、recovery loop、delivery contract，并通过 `mode` 切换语气。
 
 ## 推荐使用链路
 
