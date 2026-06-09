@@ -22,12 +22,14 @@ description: >-
 ## 协议对齐
 
 - `⚪/🟢`：直接处理，默认不要求文书。
-- `🟡`：最小文书路径，且在 `Reviewed=Approved` 停止，除非用户明确说 `继续` 或 `归档`。
-- `🔴`：全路径文书与状态机流转。
+- `🟡`：最小文书路径，默认绑定 `change-id`，且在 `Reviewed=Approved` 停止，除非用户明确说 `继续` 或 `归档`。
+- `🔴`：全路径文书与状态机流转，必须绑定 `change-id`。
+- `change-id` 是需求主键；`run_id` 是执行实例、审计与 evidence 主键。
 
 ## 硬约束
 
 - `🟡/🔴` 未通过门下省硬审（PASS）前，不得进入执行。
+- `🟡/🔴` 在 `Reviewed=Approved` 前必须检查 `changes/<change-id>/proposal.md`、`design.md`、`tasks.md`；稳定规格变更还需检查 `spec-delta/`。
 - run 的每次状态变化必须写入 `run.json.audit`。
 - 若脚本系统不可用，必须明示并进入逻辑协议模式；不得伪造“已执行脚本”。
 
@@ -45,6 +47,12 @@ description: >-
 - 证据与契约：
   - `collect-evidence`：执行测试命令并生成 `test_result.json`
   - `validate-skill-contract`：校验 skill 输出 contract（输入/输出/证据）
+- Change-aware：
+  - `init-change`：初始化 `changes/<change-id>/`
+  - `validate-change`：检查 proposal/design/tasks/spec-delta 完整性
+  - `link-change`：将 run 绑定到 `change-id`
+  - `archive-change`：写入 archive skeleton 或校验归档
+  - `sync-spec-index`：刷新 spec/change 索引
 
 ## 轻量可观测（新增）
 
@@ -58,8 +66,10 @@ description: >-
   - `grade_or_level`
   - `run_context`
   - `governance_intent`
+  - `change_id`（L2/L3 默认必填）
 - `outputs_required`
   - `run_id`
+  - `change_id`
   - `status`
   - `current_artifacts`
   - `gate_decision`
@@ -67,6 +77,9 @@ description: >-
 - `evidence_files`
   - `run.json`
   - `run.json.audit`
+  - `changes/<change-id>/proposal.md`
+  - `changes/<change-id>/design.md`
+  - `changes/<change-id>/tasks.md`
   - `gate_reports/*.json`
 
 ## Fallback

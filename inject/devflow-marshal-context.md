@@ -22,12 +22,14 @@ Before anything else, classify the request:
 - Triggers: multi-file bounded change, endpoint/schema addition, dependency upgrade, performance tuning, moderate refactor, small integration
 - Protocol: slim path only
 - Required artifacts: run.json, run.json.audit, 01_plan.md, 02_review.md
+- Default object: repository-backed `change-id` with proposal/design/tasks under `changes/<change-id>/`
 - Halt at Reviewed=Approved unless Emperor explicitly says 「继续」 or upgrades to 「归档」
 
 🔴 正奏
 - Triggers: new feature, architecture change, cross-system integration, migration, security-sensitive work, workflow redesign, anything marked 「正式」「归档」「立案」「走流程」
 - Protocol: full path
 - Required artifacts: run.json, run.json.audit, 01_plan.md, 02_review.md, 03_dispatch.md, 04_delivery.md, 05_postmortem.md
+- Required object: repository-backed `change-id` with proposal/design/tasks and archive path
 
 Mandatory rule:
 - Announce the chosen grade in one sentence before proceeding.
@@ -43,9 +45,10 @@ Mandatory rule:
 3. Prefer the simplest viable solution.
 4. Escalate process only when scope/risk justifies it.
 5. No 🟡/🔴 execution without review gate.
-6. Long workflows must stay token-efficient.
-7. Do not silently invent requirements, abstractions, or ceremony.
-8. If information is missing, state reasonable defaults and continue unless risk is destructive or irreversible.
+6. For repository-backed 🟡/🔴 work, no review approval without change artifacts.
+7. Long workflows must stay token-efficient.
+8. Do not silently invent requirements, abstractions, or ceremony.
+9. If information is missing, state reasonable defaults and continue unless risk is destructive or irreversible.
 
 ==================================================
 三、长流程控 token 令
@@ -115,11 +118,12 @@ Transitions:
 
 Draft → Planned
 - 01_plan.md exists
-- includes objective, scope, dependencies, risk/rollback, acceptance
+- includes objective, linked change-id when applicable, dependencies, risk/rollback, acceptance
 
 Planned → Reviewed
 - 门下省 review completed
 - 02_review.md records PASS or FAIL
+- repository-backed L2/L3 has proposal.md, design.md, tasks.md before PASS
 
 Reviewed=Rejected → Planned
 - rework instructions appended
@@ -141,8 +145,10 @@ Path:
 DEVFLOW_ROOT\YYYYMMDD_<project>_<topic>\
 
 01_plan.md must include:
+- change-id when applicable
+- links to proposal/design/tasks when applicable
 - objective
-- scope in / out
+- governance scope in / out
 - assumptions
 - dependencies
 - milestones
@@ -182,6 +188,7 @@ Every item must pass, or the verdict is FAIL.
 
 - [ ] Target is measurable with clear pass/fail criteria
 - [ ] Scope boundary is explicit
+- [ ] Repository-backed L2/L3 has `changes/<change-id>/proposal.md`, `design.md`, and `tasks.md`
 - [ ] Dependencies are listed
 - [ ] Risk + rollback exist, including at least one rollback trigger
 - [ ] Milestones include outputs and timing or sequencing
@@ -203,6 +210,11 @@ Canonical operations:
 - <content> | python <DEVFLOW_SCRIPT> write-artifact --run-id <id> --artifact <plan|review|dispatch|delivery|postmortem>
 - python <DEVFLOW_SCRIPT> update-status --run-id <id> --status <...> --actor <...> --note "..."
 - python <DEVFLOW_SCRIPT> validate-run --run-id <id>
+- python <DEVFLOW_SCRIPT> init-change --change-id <id>
+- python <DEVFLOW_SCRIPT> validate-change --change-id <id>
+- python <DEVFLOW_SCRIPT> link-change --run-id <id> --change-id <id>
+- python <DEVFLOW_SCRIPT> archive-change --change-id <id>
+- python <DEVFLOW_SCRIPT> sync-spec-index
 
 If the script/system is unavailable:
 - state that explicitly

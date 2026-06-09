@@ -33,6 +33,8 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
 - `execution_mode`：`plan_only | execute_after_gate | formal_state_machine`
 - `execution_budget`：`tiny | normal | extended`
 - `grill_required`：`yes | no`（是否必须先走 `grill-lite`）
+- `artifact_mode`：`chat_only | repo_change`
+- `change_required`：`yes | no`
 
 ## Contract
 
@@ -46,6 +48,8 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
   - `required_checks`
   - `stop_point`
   - `grill_required`
+  - `artifact_mode`
+  - `change_required`
 - `evidence_files`
   - 无硬性文件（决策型 skill）
 
@@ -108,12 +112,16 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
 - 测试与证据：默认加入 `test-evidence-packager`，并要求输出 `test_result.json`
 - 风险触发：仅在高风险、发布前或跨系统联调时追加 `qa-gatekeeper` 与 `code-reviewer`
 - 停点：`Reviewed=Approved`
+- `artifact_mode=repo_change`
+- `change_required=yes`
 
 ### `L3 / 🔴 正奏 / formal`
 - 适用：正式需求、高风险改动、跨系统、上线/归档/立案
 - 默认链路：`DevFlow Marshal` 主导；其余 skills 按阶段调用
 - 治理校验：默认加入 `skill-contract-checker` 与 `memory-sync-gate`
 - 停点：按治理状态机推进
+- `artifact_mode=repo_change`
+- `change_required=yes`
 
 ## 决策规则
 - 若 `governance=formal_required`，直接进入 `L3 / 🔴`
@@ -132,6 +140,8 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
 - 若信息不足且风险高，先补澄清，不直接执行
 - 若任务为 trivial（明显一行修复、纯文案、无行为改动），可直接按 L1 最小链路执行
 - 若任务存在明显不确定性（方案未定/成本未知/依赖未知），先走 Spike 决策再进入实现链路
+- `L0/L1` 默认 `artifact_mode=chat_only`，除非用户要求 repo 文书或已有 active change。
+- `L2/L3` 默认 `artifact_mode=repo_change` 且 `change_required=yes`，必须在 gate 前拥有 `change-id`。
 
 ## 调用方式
 - `$entry-router` + 用户需求 +（可选）风险/时限/是否正式
@@ -156,6 +166,8 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
   - `required_checks` 是否包含 `test_result.json`
   - `execution_mode` 是 `plan_only` 还是 `execute_after_gate`
   - `stop_point` 前是否必须通过门禁校验
+  - `change_required` 是否为 `yes`
+  - `artifact_mode` 是否为 `repo_change`
 
 ## Spike 调研补位（个人流程缺口）
 

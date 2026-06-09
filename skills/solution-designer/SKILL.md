@@ -23,6 +23,7 @@ description: "Designs solution options and trade-offs. Invoke when需求不清�
 - `tradeoffs`（成本/风险/复杂度）
 - `recommended_option`
 - `handoff_to_task_planner`（必须包含范围、依赖、风险、验收）
+- L2/L3 默认写入或更新 `changes/<change-id>/design.md`
 
 ## Handoff Contract
 
@@ -43,9 +44,12 @@ description: "Designs solution options and trade-offs. Invoke when需求不清�
   - `options`
   - `tradeoffs`
   - `recommended_option`
+  - `affected_files_or_modules`
+  - `rollback_strategy`
   - `handoff_to_task_planner`
 - `evidence_files`
-  - `01_plan.md`（建议在 L2/L3 落地）
+  - `changes/<change-id>/design.md`（L2/L3 默认）
+  - `01_plan.md`（仅治理摘要引用，不承载完整正文）
 
 ## Fallback
 
@@ -54,3 +58,4 @@ description: "Designs solution options and trade-offs. Invoke when需求不清�
 ## Handoff
 
 - 强制交接：`task-planner`
+- L2/L3 handoff 必须包含 `change_id`、`design_path`、`recommended_option`。

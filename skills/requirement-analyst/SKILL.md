@@ -24,6 +24,7 @@ description: "分析自然语言需求，澄清范围与约束，拆解为可执
 - 验收标准（功能/性能/安全）
 - 风险与缓解方案
 - 测试建议（单测/集成/回归/数据校验）
+- L2/L3 默认写入或更新 `changes/<change-id>/proposal.md`
 
 ## 工作流程
 1. 解析需求与目标，识别强约束（安全/性能/不引入复杂度）
@@ -56,11 +57,14 @@ description: "分析自然语言需求，澄清范围与约束，拆解为可执
   - `priority`（可选）
 - `outputs_required`
   - `scope_definition`
+  - `in_scope`
+  - `out_of_scope`
   - `task_list`
   - `acceptance_criteria`
   - `risk_and_test_plan`
 - `evidence_files`
-  - `01_plan.md`（L2/L3 建议）
+  - `changes/<change-id>/proposal.md`（L2/L3 默认）
+  - `01_plan.md`（仅治理摘要引用，不承载完整正文）
 
 ## Fallback
 
@@ -69,3 +73,4 @@ description: "分析自然语言需求，澄清范围与约束，拆解为可执
 ## Handoff
 
 - 默认交接：`solution-designer` 或 `task-planner`（按需求清晰度）。
+- L2/L3 handoff 必须包含 `change_id` 与 `proposal_path`。

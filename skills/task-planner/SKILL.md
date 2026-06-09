@@ -23,6 +23,7 @@ description: "Builds executable WBS, milestones, and acceptance checks. Invoke a
 - `milestones`（时间点 + 产物）
 - `acceptance_criteria`
 - `risk_and_mitigation`
+- L2/L3 默认写入或更新 `changes/<change-id>/tasks.md`
 
 ## Contract
 
@@ -35,9 +36,11 @@ description: "Builds executable WBS, milestones, and acceptance checks. Invoke a
   - `wbs`
   - `milestones`
   - `acceptance_criteria`
+  - `verification_plan`
   - `risk_and_mitigation`
 - `evidence_files`
-  - `01_plan.md`（L2/L3 推荐）
+  - `changes/<change-id>/tasks.md`（L2/L3 默认）
+  - `01_plan.md`（仅治理摘要引用，不承载完整正文）
 
 ## Fallback
 
@@ -48,6 +51,7 @@ description: "Builds executable WBS, milestones, and acceptance checks. Invoke a
 
 - 默认交接到：`pragmatic-coder`
 - L2/L3 建议追加：`test-evidence-packager`、`skill-contract-checker`
+- L2/L3 handoff 必须包含 `change_id`、`tasks_path`、`verification_plan`。
 
 ## Guardrails
 

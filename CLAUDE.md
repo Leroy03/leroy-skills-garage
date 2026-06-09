@@ -28,6 +28,9 @@
 - **Spike 先行**：方案未定或成本未知時，先輸出 `timebox/options/recommendation/stop`。
 - **依賴變更門禁**：新增或升級依賴時，至少補 changelog、直接驗證、回滾說明。
 - **記憶分層**：單次摘要用 `context-archiver`，長期事實用 `permanent-memory`，封存前門禁用 `memory-sync-gate`。
+- **Spec-first 主軸**：`L2/L3` 預設以 `change-id` 作需求主鍵；`run-id` 是執行實例，用於狀態、審計、證據與 gate 報告。
+- **文書邊界**：`changes/<change-id>/proposal.md`、`design.md`、`tasks.md` 承載正文；DevFlow run 文書只保留治理摘要與引用。
+- **Change gate**：`Reviewed=Approved` 前需檢查 proposal/design/tasks，穩定規格變更需補 `spec-delta/`。
 
 ## 同步規則
 

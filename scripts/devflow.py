@@ -67,6 +67,17 @@ PROJECT_TEMPLATE_FILES: dict[str, str] = {
     "devflow.templates/regression_scope.md": "# Regression Scope\n\n- P0:\n- P1:\n- P2:\n",
 }
 
+CHANGE_TEMPLATE_MAP: dict[str, str] = {
+    "proposal": "proposal.template.md",
+    "design": "design.template.md",
+    "tasks": "tasks.template.md",
+    "delivery": "delivery.template.md",
+    "archive": "archive.template.md",
+    "spec-delta": "spec-delta.template.md",
+}
+
+REQUIRED_CHANGE_FILES = ("proposal.md", "design.md", "tasks.md")
+
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -106,6 +117,71 @@ def find_run_dir(run_id: str) -> Path:
         if data.get("run_id") == run_id:
             return child
     raise SystemExit(f"run not found: {run_id!r} under {root}")
+
+
+def project_root() -> Path:
+    return Path.cwd().resolve()
+
+
+def changes_root(root: Path | None = None) -> Path:
+    base = (root or project_root()) / "changes"
+    base.mkdir(parents=True, exist_ok=True)
+    return base
+
+
+def specs_root(root: Path | None = None) -> Path:
+    base = (root or project_root()) / "specs"
+    base.mkdir(parents=True, exist_ok=True)
+    return base
+
+
+def change_dir(change_id: str, root: Path | None = None) -> Path:
+    return changes_root(root) / _slug(change_id, 80)
+
+
+def _template_path(name: str, root: Path | None = None) -> Path:
+    return changes_root(root) / "templates" / CHANGE_TEMPLATE_MAP[name]
+
+
+def _read_template(name: str, fallback: str, root: Path | None = None) -> str:
+    path = _template_path(name, root)
+    if path.is_file():
+        return path.read_text(encoding="utf-8")
+    return fallback
+
+
+def _write_if_missing(path: Path, content: str, force: bool = False) -> bool:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() and not force:
+        return False
+    if content and not content.endswith("\n"):
+        content += "\n"
+    path.write_text(content, encoding="utf-8")
+    return True
+
+
+def _replace_change_fields(text: str, change_id: str) -> str:
+    replacements = {
+        "- change-id:": f"- change-id: {change_id}",
+        "- created_at:": f"- created_at: {date.today().isoformat()}",
+        "- delivered_at:": f"- delivered_at: {date.today().isoformat()}",
+        "- archived_at:": f"- archived_at: {date.today().isoformat()}",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
+def _append_audit(run_dir: Path, actor: str, note: str) -> None:
+    audit_line = {
+        "ts": _utc_now_iso(),
+        "actor": actor,
+        "from_status": None,
+        "to_status": None,
+        "note": note,
+    }
+    with (run_dir / "run.json.audit").open("a", encoding="utf-8") as f:
+        f.write(json.dumps(audit_line, ensure_ascii=False) + "\n")
 
 
 def _project_config_path(project_root: Path) -> Path:
@@ -415,6 +491,181 @@ def cmd_validate_run(args: argparse.Namespace) -> None:
     if errors:
         raise SystemExit("validate failed:\n- " + "\n- ".join(errors))
     print("validate ok")
+
+
+def cmd_init_change(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    cid = _slug(args.change_id, 80)
+    cdir = change_dir(cid, root)
+    cdir.mkdir(parents=True, exist_ok=True)
+    (cdir / "spec-delta").mkdir(parents=True, exist_ok=True)
+    created: list[str] = []
+    skipped: list[str] = []
+    file_specs = {
+        "proposal.md": _read_template("proposal", "# Proposal\n\n- change-id:\n", root),
+        "design.md": _read_template("design", "# Design\n\n- change-id:\n", root),
+        "tasks.md": _read_template("tasks", "# Tasks\n\n- change-id:\n", root),
+        "delivery.md": _read_template("delivery", "# Delivery\n\n- change-id:\n", root),
+        "archive.md": _read_template("archive", "# Archive\n\n- change-id:\n", root),
+    }
+    for name, body in file_specs.items():
+        path = cdir / name
+        wrote = _write_if_missing(path, _replace_change_fields(body, cid), args.force)
+        (created if wrote else skipped).append(str(path))
+    delta_template = _read_template("spec-delta", "# Spec Delta\n\n- change-id:\n", root)
+    delta_path = cdir / "spec-delta" / "README.md"
+    wrote_delta = _write_if_missing(delta_path, _replace_change_fields(delta_template, cid), args.force)
+    (created if wrote_delta else skipped).append(str(delta_path))
+    _append_event(
+        cdir,
+        {
+            "command": "init-change",
+            "status": "success",
+            "change_id": cid,
+            "created_count": len(created),
+            "skipped_count": len(skipped),
+        },
+    )
+    print(json.dumps({"change_id": cid, "path": str(cdir), "created": created, "skipped": skipped}, ensure_ascii=False))
+
+
+def cmd_validate_change(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    cid = _slug(args.change_id, 80)
+    cdir = change_dir(cid, root)
+    errors: list[str] = []
+    if not cdir.is_dir():
+        errors.append(f"change directory missing: {cdir}")
+    for name in REQUIRED_CHANGE_FILES:
+        path = cdir / name
+        if not path.is_file():
+            errors.append(f"{name} missing")
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace").strip()
+        if not text:
+            errors.append(f"{name} is empty")
+        if "- change-id:" in text and cid not in text:
+            errors.append(f"{name} does not mention change-id {cid}")
+    if args.require_spec_delta:
+        delta_dir = cdir / "spec-delta"
+        delta_files = [p for p in delta_dir.glob("*.md") if p.is_file()] if delta_dir.is_dir() else []
+        if not delta_files:
+            errors.append("spec-delta/*.md required but missing")
+    gate_status = "passed" if not errors else "failed"
+    gate_path = _write_gate_report(
+        cdir,
+        "validate-change",
+        gate_status,
+        errors,
+        {"change_id": cid, "path": str(cdir), "require_spec_delta": args.require_spec_delta},
+    )
+    _append_event(
+        cdir,
+        {
+            "command": "validate-change",
+            "status": gate_status,
+            "change_id": cid,
+            "artifact": str(gate_path),
+            "error_count": len(errors),
+        },
+    )
+    if errors:
+        raise SystemExit("validate-change failed:\n- " + "\n- ".join(errors))
+    print(json.dumps({"status": "passed", "change_id": cid, "gate_report": str(gate_path)}, ensure_ascii=False))
+
+
+def cmd_link_change(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    cid = _slug(args.change_id, 80)
+    cdir = change_dir(cid, root)
+    if not cdir.is_dir():
+        raise SystemExit(f"change directory missing: {cdir}")
+    run_dir = find_run_dir(args.run_id)
+    rj = run_dir / "run.json"
+    data: dict[str, Any] = json.loads(rj.read_text(encoding="utf-8"))
+    data["change_id"] = cid
+    data["change_path"] = str(cdir.resolve())
+    data["artifact_mode"] = "repo_change"
+    data["updated_at"] = _utc_now_iso()
+    rj.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    _append_audit(run_dir, args.actor, f"link-change {cid}")
+    _append_event(
+        run_dir,
+        {
+            "command": "link-change",
+            "status": "success",
+            "run_id": args.run_id,
+            "change_id": cid,
+            "change_path": str(cdir.resolve()),
+        },
+    )
+    print(json.dumps({"run_id": args.run_id, "change_id": cid, "change_path": str(cdir.resolve())}, ensure_ascii=False))
+
+
+def cmd_archive_change(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    cid = _slug(args.change_id, 80)
+    cdir = change_dir(cid, root)
+    if not cdir.is_dir():
+        raise SystemExit(f"change directory missing: {cdir}")
+    archive_path = cdir / "archive.md"
+    body = _replace_change_fields(_read_template("archive", "# Archive\n\n- change-id:\n", root), cid)
+    wrote = _write_if_missing(archive_path, body, args.force)
+    if args.validate:
+        validate_args = argparse.Namespace(project_root=str(root), change_id=cid, require_spec_delta=False)
+        cmd_validate_change(validate_args)
+    _append_event(
+        cdir,
+        {
+            "command": "archive-change",
+            "status": "success",
+            "change_id": cid,
+            "archive": str(archive_path),
+            "created": wrote,
+        },
+    )
+    print(json.dumps({"change_id": cid, "archive": str(archive_path), "created": wrote}, ensure_ascii=False))
+
+
+def cmd_sync_spec_index(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    specs = []
+    if specs_root(root).is_dir():
+        for spec in sorted(specs_root(root).glob("*/spec.md")):
+            specs.append({"capability": spec.parent.name, "path": str(spec.relative_to(root))})
+    changes = []
+    if changes_root(root).is_dir():
+        for cdir in sorted(p for p in changes_root(root).iterdir() if p.is_dir() and p.name != "templates"):
+            changes.append(
+                {
+                    "change_id": cdir.name,
+                    "path": str(cdir.relative_to(root)),
+                    "has_proposal": (cdir / "proposal.md").is_file(),
+                    "has_design": (cdir / "design.md").is_file(),
+                    "has_tasks": (cdir / "tasks.md").is_file(),
+                    "has_archive": (cdir / "archive.md").is_file(),
+                }
+            )
+    payload = {
+        "generated_at": _utc_now_iso(),
+        "specs": specs,
+        "changes": changes,
+    }
+    out = root / args.output
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if out.suffix.lower() == ".json":
+        out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    else:
+        lines = ["# Spec / Change Index", "", f"- generated_at: {payload['generated_at']}", "", "## Specs", ""]
+        lines.extend(f"- `{item['capability']}`: `{item['path']}`" for item in specs)
+        lines.extend(["", "## Changes", ""])
+        lines.extend(
+            f"- `{item['change_id']}`: `{item['path']}` "
+            f"(proposal={item['has_proposal']}, design={item['has_design']}, tasks={item['has_tasks']}, archive={item['has_archive']})"
+            for item in changes
+        )
+        out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(json.dumps({"output": str(out), "spec_count": len(specs), "change_count": len(changes)}, ensure_ascii=False))
 
 
 def cmd_init_project(args: argparse.Namespace) -> None:
@@ -869,6 +1120,37 @@ def main() -> None:
     c12.add_argument("--skill", action="append", help="Skill name to validate contract; can pass multiple")
     c12.add_argument("--init-missing", action="store_true", help="Create missing skill contract files before check")
     c12.set_defaults(func=cmd_df_gate)
+
+    c13 = sub.add_parser("init-change", help="Initialize changes/<change-id> artifacts")
+    c13.add_argument("--project-root", default=".")
+    c13.add_argument("--change-id", required=True)
+    c13.add_argument("--force", action="store_true")
+    c13.set_defaults(func=cmd_init_change)
+
+    c14 = sub.add_parser("validate-change", help="Validate change artifact completeness")
+    c14.add_argument("--project-root", default=".")
+    c14.add_argument("--change-id", required=True)
+    c14.add_argument("--require-spec-delta", action="store_true")
+    c14.set_defaults(func=cmd_validate_change)
+
+    c15 = sub.add_parser("link-change", help="Link a run to a change-id")
+    c15.add_argument("--project-root", default=".")
+    c15.add_argument("--run-id", required=True)
+    c15.add_argument("--change-id", required=True)
+    c15.add_argument("--actor", default="devflow.py")
+    c15.set_defaults(func=cmd_link_change)
+
+    c16 = sub.add_parser("archive-change", help="Create or validate change archive artifact")
+    c16.add_argument("--project-root", default=".")
+    c16.add_argument("--change-id", required=True)
+    c16.add_argument("--force", action="store_true")
+    c16.add_argument("--validate", action="store_true")
+    c16.set_defaults(func=cmd_archive_change)
+
+    c17 = sub.add_parser("sync-spec-index", help="Write a specs/changes index")
+    c17.add_argument("--project-root", default=".")
+    c17.add_argument("--output", default="docs/indexes/02-spec-change-index.md")
+    c17.set_defaults(func=cmd_sync_spec_index)
 
     args = p.parse_args()
     args.func(args)

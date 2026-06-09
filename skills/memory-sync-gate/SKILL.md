@@ -12,6 +12,7 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 
 ## 輸入
 - `run_id`
+- `change_id`（L2/L3 repository-backed change 必填）
 - `delivery_artifacts`
 - `evidence_files`
 
@@ -27,6 +28,8 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 
 ## 門禁規則
 - 任一必需沉澱檔缺失則 gate fail。
+- 若 `change_id` 已提供，必須確認 `changes/<change-id>/delivery.md` 或 `archive.md` 已存在。
+- memory 只能收穩定結論、可復用命令、回滾經驗或長期契約；不得複製完整 `proposal.md` / `design.md` / `tasks.md` 正文。
 
 ## 命令映射
 - 當前由 skill 直接執行檢查，後續可擴充 `devflow.py validate-memory-gate`。
@@ -35,6 +38,7 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
 
 - `inputs_required`
   - `run_id`
+  - `change_id`（L2/L3 repository-backed change 必填）
   - `delivery_artifacts`
   - `evidence_files`
 - `outputs_required`
@@ -43,6 +47,7 @@ description: 交付與封存前的沉澱門禁，驗證決策與證據是否完�
   - `memory_index.json`
 - `evidence_files`
   - `04_delivery.md`
+  - `changes/<change-id>/delivery.md` 或 `changes/<change-id>/archive.md`
   - `gate_reports/*.json`
 
 ## Fallback

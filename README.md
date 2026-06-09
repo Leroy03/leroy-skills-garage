@@ -32,6 +32,27 @@
 | `🟡 常奏` | `L2` | `planned` | 多文件、需轻规划、需评审 |
 | `🔴 正奏` | `L3` | `formal` | 正式项目、高风险、跨系统、需审计 |
 
+## Spec-First DevFlow 主轴
+
+本仓库按 `Spec/Change 主轴 + DevFlow 治理层 + Skills 执行层 + Memory 沉淀层` 演进。
+
+- `change-id` 是 L2/L3 的需求主键，格式为 `YYYYMMDD-<topic-slug>`。
+- `run-id` 是执行实例主键，只负责状态、审计、证据和 gate 报告。
+- 需求、设计、任务正文放在 `changes/<change-id>/`。
+- DevFlow run 文书只写治理摘要、review 结论和 evidence 引用，不复制完整正文。
+- 长期稳定能力契约放在 `specs/<capability>/spec.md`。
+- memory 只沉淀稳定结论，不保存一次性 change 正文副本。
+
+发起一个 change 的最小路径：
+
+1. 创建 `changes/<change-id>/`。
+2. 从 `changes/templates/` 复制 `proposal.md`、`design.md`、`tasks.md`。
+3. 需要治理追踪时创建 run，并把 run 绑定到 `change-id`。
+4. 在 `Reviewed=Approved` 前检查 proposal/design/tasks，必要时检查 `spec-delta/`。
+5. 交付后写 `delivery.md`，归档时写 `archive.md` 并筛选 memory candidates。
+
+操作细节见 `docs/change-lifecycle.md`。
+
 ## 分级判定轴
 
 - `scope`：只读 / 单文件 / 多文件 / 跨系统
@@ -159,6 +180,8 @@
 - DevFlow 协议：`inject/devflow-marshal-context.md`
 - DevFlow 工具说明：`docs/devflow-run-tooling.md`
 - DevFlow 职责映射：`docs/devflow-marshal-subagent-scope.md`
+- Spec-first DevFlow 总计划：`docs/spec-first-devflow-fusion-plan.md`
+- Change lifecycle：`docs/change-lifecycle.md`
 - 外部灵感整合：`docs/external-inspirations.md`
 - 永久记忆库：`memory/永久记忆库.md`、`memory/永久记忆库_INDEX.md`
 

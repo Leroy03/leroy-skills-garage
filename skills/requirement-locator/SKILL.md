@@ -23,6 +23,7 @@ description: "根据用户的需求/问题快速定位代码中的相关功能�
 - 推荐的修改位置（函数/类/方法）与影响面
 - 可点击的代码链接（file:///absolute/path#Lx-Ly）
 - 最小改动建议与下一步动作
+- L2/L3 默认补充 `changes/<change-id>/design.md` 或 `tasks.md` 的 affected files / modules
 
 ## 工作流程
 1. 语义解析需求，抽取领域关键词、端点、类名线索
@@ -59,7 +60,8 @@ description: "根据用户的需求/问题快速定位代码中的相关功能�
   - `impact_scope`
   - `next_actions`
 - `evidence_files`
-  - 无硬性文件（定位型 skill）
+  - 无硬性文件（L0/L1 定位型 skill）
+  - `changes/<change-id>/design.md` 或 `changes/<change-id>/tasks.md`（L2/L3 默认补充）
 
 ## Fallback
 
@@ -68,3 +70,4 @@ description: "根据用户的需求/问题快速定位代码中的相关功能�
 ## Handoff
 
 - 默认交接：`context-builder`（补上下文）或 `pragmatic-coder`（执行改动）。
+- L2/L3 handoff 必须包含 `change_id` 与 `affected_files_or_modules`。

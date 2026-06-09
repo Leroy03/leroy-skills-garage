@@ -1,0 +1,11 @@
+{
+  "ts": "2026-06-09T11:51:58+00:00",
+  "gate_name": "validate-change",
+  "status": "passed",
+  "reasons": [],
+  "details": {
+    "change_id": "20260609-spec-first-devflow-fusion-first-slice",
+    "path": "D:\\leroy-skills-garage\\changes\\20260609-spec-first-devflow-fusion-first-slice",
+    "require_spec_delta": false
+  }
+}

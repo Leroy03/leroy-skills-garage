@@ -23,10 +23,13 @@
 - Spike 先行：方案未定/成本未知先產出 `timebox/options/recommendation/stop`。
 - 依賴門禁：新增/升級依賴需 changelog、直接驗證、回滾說明。
 - 記憶分層：`context-archiver`（單次）/`permanent-memory`（長期）/`memory-sync-gate`（封存前）。
+- Spec-first：`L2/L3` 預設使用 `change-id` 作為需求主鍵；`run-id` 只作執行實例、審計與證據追蹤。
+- 文書邊界：需求/設計/任務正文放 `changes/<change-id>/`；DevFlow run 文書只放治理摘要與 gate 結論。
 
 ## 不可省
 - 除 `L0` 外，宣告完成前必有驗證證據與 `completion_decision`。
 - `AGENTS.md` 與 `CLAUDE.md` 規則需同步，衝突取較嚴者。
+- `L2/L3` 在 `Reviewed=Approved` 前需檢查 change artifacts：`proposal.md`、`design.md`、`tasks.md`，必要時包含 `spec-delta/`。
 
 ## 三省六部速記
 - `🟡/🔴`：中書（規劃）-> 門下（審議）-> 尚書（統籌）再執行；`🟡` 停 `Reviewed=Approved`，`🔴` 走完整狀態機。
