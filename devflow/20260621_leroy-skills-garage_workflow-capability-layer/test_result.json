@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "project": "leroy-skills-garage",
+  "run_id": "20260621_leroy-skills-garage_workflow-capability-layer",
+  "level": "L3",
+  "generated_at": "2026-06-21T09:27:57+00:00",
+  "environment": {
+    "os": "nt",
+    "python": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "venv_path": ".venv",
+    "cwd": "D:\\leroy-skills-garage"
+  },
+  "summary": {
+    "total_commands": 4,
+    "passed": 4,
+    "failed": 0,
+    "duration_ms": 771,
+    "overall_status": "passed"
+  },
+  "commands": [
+    {
+      "id": "cmd-1",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m unittest discover -s tests -p test_*.py -v",
+      "start_at": "2026-06-21T09:27:56+00:00",
+      "end_at": "2026-06-21T09:27:57+00:00",
+      "duration_ms": 513,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout_snippet": "",
+      "stderr_snippet": "test_bundled_workflows_validate (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_bundled_workflows_validate) ... ok\ntest_command_provider_can_require_project_path (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_command_provider_can_require_project_path) ... ok\ntest_doctor_selects_available_providers (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_doctor_selects_available_providers) ... ok\ntest_invalid_workflow_fails_with_actionable_errors (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_invalid_workflow_fails_with_actionable_errors) ... ok\ntest_resolve_capability_returns_first_available_provider (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_resolve_capability_returns_first_available_provider) ... ok\ntest_strict_doctor_fails_for_unresolved_provider (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_strict_doctor_fails_for_unresolved_provider) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.427s\n\nOK\n",
+      "artifacts": []
+    },
+    {
+      "id": "cmd-2",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/validate_skills.py",
+      "start_at": "2026-06-21T09:27:57+00:00",
+      "end_at": "2026-06-21T09:27:57+00:00",
+      "duration_ms": 90,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout_snippet": "r\",\n      \"description\": \"Defines test matrix and release quality gates. Invoke when需要测试覆盖、发布门禁、回归范围定义。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/regression-matrix-builder/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"regression-matrix-builder\",\n      \"description\": \"依改動範圍建立回歸測試矩陣，確保核心流程與高風險模組被覆蓋。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/requirement-analyst/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"requirement-analyst\",\n      \"description\": \"分析自然语言需求，澄清范围与约束，拆解为可执行任务清单并给出验收标准。用户要求“做需求分析/拆分任务/列验收标准/风险与测试”时调用。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/requirement-locator/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"requirement-locator\",\n      \"description\": \"根据用户的需求/问题快速定位代码中的相关功能与修改位置。用户要求“定位功能/查找应该改哪里/给出代码链接与入口”时调用。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/skill-contract-checker/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"skill-contract-checker\",\n      \"description\": \"檢查 skills 執行結果是否符合輸入/輸出/證據 contract。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/solution-designer/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"solution-designer\",\n      \"description\": \"Designs solution options and trade-offs. Invoke when需求不清或需要方案选择；完成方案后应移交task-planner做WBS拆解。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/task-planner/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"task-planner\",\n      \"description\": \"Builds executable WBS, milestones, and acceptance checks. Invoke after方案确定，或用户要求排期/任务拆解时。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/tdd-lite/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"tdd-lite\",\n      \"description\": \"Applies lightweight test-first or test-near workflow for risky changes. Invoke when core logic changes need protection without pulling the full process heavier.\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/test-evidence-packager/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"test-evidence-packager\",\n      \"description\": \"全域測試證據打包器。執行專案測試命令並產生標準 test_result.json。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/verification-before-completion/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"verification-before-completion\",\n      \"description\": \"Requires evidence before declaring work done. Invoke after implementation, bugfix, or optimization and before claiming completion or delivery.\",\n      \"errors\": []\n    }\n  ],\n  \"packages\": [\n    {\n      \"name\": \"core-flow\",\n      \"skill_count\": 6,\n      \"skills\": [\n        \"entry-router\",\n        \"capability-router\",\n        \"grill-lite\",\n        \"karpathy-guidelines\",\n        \"pragmatic-coder\",\n        \"verification-before-completion\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"planning-flow\",\n      \"skill_count\": 6,\n      \"skills\": [\n        \"grill-lite\",\n        \"solution-designer\",\n        \"task-planner\",\n        \"context-builder\",\n        \"requirement-analyst\",\n        \"requirement-locator\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"quality-gates\",\n      \"skill_count\": 7,\n      \"skills\": [\n        \"test-evidence-packager\",\n        \"skill-contract-checker\",\n        \"qa-gatekeeper\",\n        \"regression-matrix-builder\",\n        \"code-reviewer\",\n        \"ai-output-auditor\",\n        \"delivery-tracker\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"governance-flow\",\n      \"skill_count\": 5,\n      \"skills\": [\n        \"devflow-marshal\",\n        \"dev-flow-orchestrator\",\n        \"memory-sync-gate\",\n        \"context-archiver\",\n        \"permanent-memory\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"implementation-specialists\",\n      \"skill_count\": 5,\n      \"skills\": [\n        \"bug-hunter\",\n        \"code-optimizer\",\n        \"tdd-lite\",\n        \"knowledge-keeper\",\n        \"daily-qa-work-summary\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+      "stderr_snippet": "",
+      "artifacts": []
+    },
+    {
+      "id": "cmd-3",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/devflow.py validate-workflow --all",
+      "start_at": "2026-06-21T09:27:57+00:00",
+      "end_at": "2026-06-21T09:27:57+00:00",
+      "duration_ms": 85,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout_snippet": "{\n  \"generated_at\": \"2026-06-21T09:27:57+00:00\",\n  \"summary\": {\n    \"status\": \"passed\",\n    \"workflow_count\": 4,\n    \"error_count\": 0\n  },\n  \"workflows\": [\n    {\n      \"workflow\": \"archive\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\archive.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"debug\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\debug.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"implement\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\implement.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"ship\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\ship.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    }\n  ]\n}\n",
+      "stderr_snippet": "",
+      "artifacts": []
+    },
+    {
+      "id": "cmd-4",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/devflow.py doctor-capabilities --strict",
+      "start_at": "2026-06-21T09:27:57+00:00",
+      "end_at": "2026-06-21T09:27:57+00:00",
+      "duration_ms": 81,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout_snippet": "{\n  \"generated_at\": \"2026-06-21T09:27:57+00:00\",\n  \"project_root\": \"D:\\\\leroy-skills-garage\",\n  \"summary\": {\n    \"status\": \"passed\",\n    \"capability_count\": 4,\n    \"unresolved_count\": 0\n  },\n  \"capabilities\": [\n    {\n      \"capability\": \"repository_search\",\n      \"description\": \"Locate code, symbols, and related files.\",\n      \"selected_provider\": \"ripgrep\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"codegraph-cli\",\n          \"available\": false,\n          \"reason\": \"command not found on PATH: codegraph\",\n          \"description\": \"Optional local semantic code graph with impact analysis.\"\n        },\n        {\n          \"name\": \"ripgrep\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\OpenAI\\\\Codex\\\\bin\\\\ada252862d154cdd\\\\rg.EXE\",\n          \"description\": \"Default fast text and file search fallback.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"test_execution\",\n      \"description\": \"Execute repository validation commands.\",\n      \"selected_provider\": \"python\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"python\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.EXE\",\n          \"description\": \"Python runtime used by repository validators and tests.\"\n        },\n        {\n          \"name\": \"python3\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python3.EXE\",\n          \"description\": \"Python runtime fallback on platforms without a python alias.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"devflow_governance\",\n      \"description\": \"Maintain DevFlow run, change, gate, and audit artifacts.\",\n      \"selected_provider\": \"project-devflow\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"project-devflow\",\n          \"available\": true,\n          \"reason\": \"path exists: D:\\\\leroy-skills-garage\\\\scripts\\\\devflow.py\",\n          \"description\": \"Repository-local DevFlow CLI.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"manual_user_input\",\n      \"description\": \"Request information that cannot be discovered locally.\",\n      \"selected_provider\": \"conversation\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"conversation\",\n          \"available\": true,\n          \"reason\": \"built-in provider\",\n          \"description\": \"Built-in user collaboration channel.\"\n        }\n      ]\n    }\n  ]\n}\n",
+      "stderr_snippet": "",
+      "artifacts": []
+    }
+  ],
+  "dependency_actions": [],
+  "coverage": {
+    "enabled": false,
+    "overall_percent": null,
+    "threshold_percent": 0,
+    "status": "skipped"
+  },
+  "quality_gates": {
+    "review_gate": "skipped",
+    "delivery_gate": "skipped",
+    "reasons": []
+  }
+}

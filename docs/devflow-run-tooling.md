@@ -14,6 +14,9 @@
 - `python .\scripts\devflow.py link-change --run-id <run_id> --change-id <change_id>`
 - `python .\scripts\devflow.py archive-change --change-id <change_id>`
 - `python .\scripts\devflow.py sync-spec-index`
+- `python .\scripts\devflow.py validate-workflow --all`
+- `python .\scripts\devflow.py doctor-capabilities --strict`
+- `python .\scripts\devflow.py resolve-capability --name <capability>`
 
 ## 默认目录
 
@@ -43,4 +46,19 @@ python .\scripts\devflow.py validate-change --change-id 20260609-example
 python .\scripts\devflow.py create-run --project leroy-skills-garage --topic example
 python .\scripts\devflow.py link-change --run-id <run_id> --change-id 20260609-example
 python .\scripts\devflow.py sync-spec-index
+```
+
+## Workflow 与 Capability
+
+- workflow recipes 位于 `workflows/*.yaml`，使用 JSON-compatible YAML，不需要 PyYAML。
+- capability registry 位于 `capabilities/providers.yaml`。
+- `validate-workflow` 检查必填字段、skill 引用、capability 引用与 next workflow 引用。
+- `doctor-capabilities` 按顺序探测 provider，并报告实际选择与 fallback。
+- `resolve-capability` 返回第一个可用 provider；无法解析时退出码非零。
+- doctor 当前只支持 `command`、`path`、`always` 三种只读 probe，不安装依赖、不读取凭据、不执行网络登录。
+
+```powershell
+python .\scripts\devflow.py validate-workflow --workflow implement
+python .\scripts\devflow.py doctor-capabilities --name repository_search
+python .\scripts\devflow.py resolve-capability --name repository_search
 ```

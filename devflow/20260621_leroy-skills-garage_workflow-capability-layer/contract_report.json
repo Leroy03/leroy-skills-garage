@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-06-21T09:25:31+00:00",
+  "required_fields": [
+    "inputs_required",
+    "outputs_required",
+    "evidence_files"
+  ],
+  "skills": [
+    {
+      "skill": "entry-router",
+      "contract_file": "D:\\leroy-skills-garage\\devflow\\20260621_leroy-skills-garage_workflow-capability-layer\\skill_contract\\entry-router.json",
+      "missing_fields": [],
+      "missing_evidence": [],
+      "status": "passed"
+    },
+    {
+      "skill": "capability-router",
+      "contract_file": "D:\\leroy-skills-garage\\devflow\\20260621_leroy-skills-garage_workflow-capability-layer\\skill_contract\\capability-router.json",
+      "missing_fields": [],
+      "missing_evidence": [],
+      "status": "passed"
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "failed": 0,
+    "passed": 2,
+    "status": "passed"
+  }
+}

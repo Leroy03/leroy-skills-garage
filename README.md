@@ -68,6 +68,8 @@
 | Planning skills 对齐 | 已默认指向 `changes/<change-id>/proposal.md`、`design.md`、`tasks.md` | `requirement-analyst`、`solution-designer`、`task-planner`、`requirement-locator` |
 | Governance skills 对齐 | 已要求 L2/L3 gate 前检查 change artifacts | `entry-router`、`DevFlow Marshal`、`inject/devflow-marshal-context.md` |
 | Memory 边界 | 已禁止把 change 正文复制进 memory | `context-archiver`、`permanent-memory`、`memory-sync-gate` |
+| Workflow recipes | 已落地可验证的 `implement/debug/ship/archive` 编排 | `workflows/*.yaml`、`validate-workflow` |
+| Capability routing | 已支持 provider 顺序、体检与 fallback | `capabilities/providers.yaml`、`capability-router`、`doctor-capabilities` |
 
 本轮验证证据：
 
@@ -82,7 +84,27 @@
 - `validate-change` 与 DevFlow minimal run gate 已通过。
 - 4 个高度重叠的 PUA 风格 skills 已合并为 `high-pressure-pua`，并补齐 `Contract/Fallback/Handoff`。
 - `python .\scripts\validate_skills.py` 已通过。
-- 下一阶段建议扩展 `specs/governance-lifecycle`、`specs/skill-contract`、`specs/test-evidence`、`specs/memory-boundary`。
+- workflow/capability layer 已通过 6 个 unit tests；当前 `repository_search` 会在 CodeGraph CLI 或项目索引不可用时回退到 `ripgrep`。
+- 下一阶段建议接入可选 CodeGraph adapter，再评估 frontend-flow 与 context-budget-manager。
+
+## Workflow / Capability Layer
+
+`workflows/*.yaml` 把现有 skills 组成可复用路径，但不复制 skill 正文，也不绕过 DevFlow gate：
+
+| Workflow | 默认等级 | 用途 | 下一步 |
+| --- | --- | --- | --- |
+| `implement` | L2 | 有边界的需求分析、规划、实现与证据 | `ship` |
+| `debug` | L2 | 上下文构建、根因定位、修复与回归 | `ship` |
+| `ship` | L3 | 测试、contract、review、QA 与交付 | `archive` |
+| `archive` | L3 | memory gate、稳定结论与归档 | 完成 |
+
+`capabilities/providers.yaml` 将抽象能力映射到有序 provider。例如 `repository_search` 优先选择 CodeGraph，未安装时自动回退到 `ripgrep`。体检命令只读，不会安装依赖、读取凭据或执行登录动作。
+
+```powershell
+python .\scripts\devflow.py validate-workflow --all
+python .\scripts\devflow.py doctor-capabilities --strict
+python .\scripts\devflow.py resolve-capability --name repository_search
+```
 
 ## 分级判定轴
 
@@ -120,6 +142,7 @@
 | Skill | 作用 | 典型触发 | 主要产出 |
 | --- | --- | --- | --- |
 | `entry-router` | 判断 `L0/L1/L2/L3`、是否需要 `grill-lite`、是否需要 `change-id` | 所有非闲聊任务入口 | level、grade、推荐链路、required checks、artifact mode |
+| `capability-router` | 将 workflow 需要的抽象能力解析为可用 provider，并记录 fallback | workflow 选定后、执行 skill 前 | resolved providers、diagnostics、fallbacks used |
 | `grill-lite` | 在需求模糊时先问 5-8 个关键问题 | 验收不清、范围不清、用户说“优化一下” | 澄清答案、假设、stop point |
 | `karpathy-guidelines` | 约束执行风格，防止乱猜、过度工程、越界改动 | 编码、调试、优化、评审前 | 简化后的执行原则与风险提醒 |
 | `pragmatic-coder` | 做最小、清晰、可验证的实现 | 边界明确的改动 | 代码改动、验证说明 |

@@ -53,6 +53,10 @@ description: >-
   - `link-change`：将 run 绑定到 `change-id`
   - `archive-change`：写入 archive skeleton 或校验归档
   - `sync-spec-index`：刷新 spec/change 索引
+- Workflow / Capability：
+  - `validate-workflow`：校验 workflow recipe 与 skill/capability 引用
+  - `doctor-capabilities`：只读探测 provider 与 fallback
+  - `resolve-capability`：为 workflow 解析一个具体 provider
 
 ## 轻量可观测（新增）
 

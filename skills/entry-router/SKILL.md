@@ -35,6 +35,9 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
 - `grill_required`：`yes | no`（是否必须先走 `grill-lite`）
 - `artifact_mode`：`chat_only | repo_change`
 - `change_required`：`yes | no`
+- `recommended_workflow`：`implement | debug | ship | archive | null`
+- `required_capabilities`：执行该 workflow 前必须解析的抽象能力列表
+- `provider_preferences`：用户或项目明确指定的 provider（可选）
 
 ## Contract
 
@@ -50,6 +53,8 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
   - `grill_required`
   - `artifact_mode`
   - `change_required`
+  - `recommended_workflow`
+  - `required_capabilities`
 - `evidence_files`
   - 无硬性文件（决策型 skill）
 
@@ -156,6 +161,19 @@ description: "Routes incoming work to the lightest valid workflow. At non-trivia
 - `L1`：`pragmatic-coder` -> `verification-before-completion`
 - `L2`：`task-planner` -> `test-evidence-packager` -> `skill-contract-checker`
 - `L3`：`DevFlow Marshal` 主导治理
+- 若 `required_capabilities` 非空：先交接 `capability-router` 解析 provider，再进入执行 skill。
+
+## Workflow Recipe 衔接
+
+- 可复用执行链优先映射到 `workflows/*.yaml`，不要在 router 内复制完整 skill 链。
+- 默认映射：
+  - 功能实现、重构、优化 -> `implement`
+  - Bug、异常、结果不符 -> `debug`
+  - 发布、交付、上线前检查 -> `ship`
+  - 归档、长期沉淀 -> `archive`
+- workflow 只提供建议链路；每次进入下一 workflow 前仍需重新判断 level、风险和 gate。
+- 使用 `python scripts/devflow.py validate-workflow --all` 校验 workflow 引用。
+- 使用 `python scripts/devflow.py doctor-capabilities` 检查 provider；doctor 只读，不自动安装。
 
 ## 与 DevFlow 命令的衔接（新增）
 

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "capabilities": {
+    "repository_search": {
+      "description": "Locate code, symbols, and related files.",
+      "providers": [
+        {
+          "name": "codegraph-cli",
+          "probe": "command",
+          "command": "codegraph",
+          "path": ".codegraph",
+          "description": "Optional local semantic code graph with impact analysis."
+        },
+        {
+          "name": "ripgrep",
+          "probe": "command",
+          "command": "rg",
+          "description": "Default fast text and file search fallback."
+        }
+      ]
+    },
+    "test_execution": {
+      "description": "Execute repository validation commands.",
+      "providers": [
+        {
+          "name": "python",
+          "probe": "command",
+          "command": "python",
+          "description": "Python runtime used by repository validators and tests."
+        },
+        {
+          "name": "python3",
+          "probe": "command",
+          "command": "python3",
+          "description": "Python runtime fallback on platforms without a python alias."
+        }
+      ]
+    },
+    "devflow_governance": {
+      "description": "Maintain DevFlow run, change, gate, and audit artifacts.",
+      "providers": [
+        {
+          "name": "project-devflow",
+          "probe": "path",
+          "path": "scripts/devflow.py",
+          "description": "Repository-local DevFlow CLI."
+        }
+      ]
+    },
+    "manual_user_input": {
+      "description": "Request information that cannot be discovered locally.",
+      "providers": [
+        {
+          "name": "conversation",
+          "probe": "always",
+          "description": "Built-in user collaboration channel."
+        }
+      ]
+    }
+  }
+}

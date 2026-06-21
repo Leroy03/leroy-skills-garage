@@ -215,6 +215,9 @@ Canonical operations:
 - python <DEVFLOW_SCRIPT> link-change --run-id <id> --change-id <id>
 - python <DEVFLOW_SCRIPT> archive-change --change-id <id>
 - python <DEVFLOW_SCRIPT> sync-spec-index
+- python <DEVFLOW_SCRIPT> validate-workflow --all
+- python <DEVFLOW_SCRIPT> doctor-capabilities --strict
+- python <DEVFLOW_SCRIPT> resolve-capability --name <capability>
 
 If the script/system is unavailable:
 - state that explicitly

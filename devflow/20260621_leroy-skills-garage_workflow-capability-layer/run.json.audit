@@ -1,0 +1,8 @@
+{"ts": "2026-06-21T09:18:44+00:00", "actor": "devflow.py", "from_status": null, "to_status": "Draft", "note": "create-run"}
+{"ts": "2026-06-21T09:19:57+00:00", "actor": "codex", "from_status": "Draft", "to_status": "Planned", "note": "change plan linked"}
+{"ts": "2026-06-21T09:19:58+00:00", "actor": "codex", "from_status": "Planned", "to_status": "Reviewed", "note": "review PASS"}
+{"ts": "2026-06-21T09:19:58+00:00", "actor": "codex", "from_status": null, "to_status": null, "note": "link-change 20260621-workflow-capability-layer"}
+{"ts": "2026-06-21T09:20:29+00:00", "actor": "codex", "from_status": "Reviewed", "to_status": "Dispatched", "note": "implementation dispatched after PASS review"}
+{"ts": "2026-06-21T09:20:29+00:00", "actor": "codex", "from_status": "Dispatched", "to_status": "Running", "note": "implementation started"}
+{"ts": "2026-06-21T09:26:35+00:00", "actor": "codex", "from_status": "Running", "to_status": "Delivered", "note": "implementation and all evidence gates passed"}
+{"ts": "2026-06-21T09:27:03+00:00", "actor": "codex", "from_status": "Delivered", "to_status": "Archived", "note": "archive artifacts and stable decisions completed"}

@@ -1,0 +1,11 @@
+{
+  "ts": "2026-06-21T09:28:22+00:00",
+  "gate_name": "validate-change",
+  "status": "passed",
+  "reasons": [],
+  "details": {
+    "change_id": "20260621-workflow-capability-layer",
+    "path": "D:\\leroy-skills-garage\\changes\\20260621-workflow-capability-layer",
+    "require_spec_delta": false
+  }
+}

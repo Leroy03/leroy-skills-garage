@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 from datetime import date, datetime, timezone
@@ -77,6 +78,16 @@ CHANGE_TEMPLATE_MAP: dict[str, str] = {
 }
 
 REQUIRED_CHANGE_FILES = ("proposal.md", "design.md", "tasks.md")
+WORKFLOW_REQUIRED_FIELDS = (
+    "name",
+    "version",
+    "level",
+    "description",
+    "skills",
+    "required_capabilities",
+    "outputs",
+    "next_workflows",
+)
 
 
 def _utc_now_iso() -> str:
@@ -668,6 +679,215 @@ def cmd_sync_spec_index(args: argparse.Namespace) -> None:
     print(json.dumps({"output": str(out), "spec_count": len(specs), "change_count": len(changes)}, ensure_ascii=False))
 
 
+def _load_json_compatible_yaml(path: Path) -> dict[str, Any]:
+    if not path.is_file():
+        raise SystemExit(f"configuration not found: {path}")
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(
+            f"{path} must use JSON-compatible YAML syntax: line {exc.lineno}, column {exc.colno}: {exc.msg}"
+        ) from exc
+    if not isinstance(loaded, dict):
+        raise SystemExit(f"{path} must contain an object at the top level")
+    return loaded
+
+
+def _known_skill_names(root: Path) -> set[str]:
+    names: set[str] = set()
+    for path in (root / "skills").glob("*/SKILL.md"):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        match = re.search(r'^name:\s*["\']?([^"\'\r\n]+)', text, flags=re.MULTILINE)
+        if match:
+            names.add(match.group(1).strip())
+    return names
+
+
+def _load_capability_registry(root: Path) -> dict[str, Any]:
+    path = root / "capabilities" / "providers.yaml"
+    data = _load_json_compatible_yaml(path)
+    capabilities = data.get("capabilities")
+    if not isinstance(capabilities, dict) or not capabilities:
+        raise SystemExit(f"{path} must define a non-empty capabilities object")
+    for name, capability in capabilities.items():
+        if not isinstance(capability, dict):
+            raise SystemExit(f"capability {name!r} must be an object")
+        providers = capability.get("providers")
+        if not isinstance(providers, list) or not providers:
+            raise SystemExit(f"capability {name!r} must define a non-empty providers list")
+        for provider in providers:
+            if not isinstance(provider, dict) or not provider.get("name") or not provider.get("probe"):
+                raise SystemExit(f"capability {name!r} has a provider missing name or probe")
+    return data
+
+
+def _workflow_files(root: Path) -> list[Path]:
+    directory = root / "workflows"
+    return sorted(directory.glob("*.yaml")) if directory.is_dir() else []
+
+
+def _validate_workflow(path: Path, root: Path, workflow_names: set[str], capabilities: set[str]) -> list[str]:
+    errors: list[str] = []
+    try:
+        data = _load_json_compatible_yaml(path)
+    except SystemExit as exc:
+        return [str(exc)]
+    for field in WORKFLOW_REQUIRED_FIELDS:
+        if field not in data:
+            errors.append(f"missing required field: {field}")
+    name = data.get("name")
+    if not isinstance(name, str) or not name:
+        errors.append("name must be a non-empty string")
+    elif name != path.stem:
+        errors.append(f"name {name!r} must match file name {path.stem!r}")
+    version = data.get("version")
+    if not isinstance(version, int) or version < 1:
+        errors.append("version must be a positive integer")
+    if data.get("level") not in {"L0", "L1", "L2", "L3"}:
+        errors.append("level must be one of L0, L1, L2, L3")
+    if not isinstance(data.get("description"), str) or not data.get("description", "").strip():
+        errors.append("description must be a non-empty string")
+
+    list_fields = ("skills", "required_capabilities", "outputs", "next_workflows")
+    for field in list_fields:
+        if field in data and not isinstance(data[field], list):
+            errors.append(f"{field} must be a list")
+
+    known_skills = _known_skill_names(root)
+    for skill in data.get("skills", []) if isinstance(data.get("skills"), list) else []:
+        if skill not in known_skills:
+            errors.append(f"unknown skill: {skill}")
+    for capability in data.get("required_capabilities", []) if isinstance(data.get("required_capabilities"), list) else []:
+        if capability not in capabilities:
+            errors.append(f"unknown capability: {capability}")
+    for next_workflow in data.get("next_workflows", []) if isinstance(data.get("next_workflows"), list) else []:
+        if next_workflow not in workflow_names:
+            errors.append(f"unknown next workflow: {next_workflow}")
+    if isinstance(data.get("outputs"), list) and not data["outputs"]:
+        errors.append("outputs must contain at least one observable result")
+    return errors
+
+
+def cmd_validate_workflow(args: argparse.Namespace) -> None:
+    root = Path(args.project_root).resolve()
+    all_files = _workflow_files(root)
+    if not all_files:
+        raise SystemExit(f"no workflow files found under {root / 'workflows'}")
+    workflow_names = {path.stem for path in all_files}
+    registry = _load_capability_registry(root)
+    capabilities = set(registry["capabilities"].keys())
+    if args.all:
+        targets = all_files
+    else:
+        targets = []
+        for raw_name in args.workflow:
+            name = Path(raw_name).stem
+            targets.append(root / "workflows" / f"{name}.yaml")
+    items = []
+    total_errors = 0
+    for path in targets:
+        errors = _validate_workflow(path, root, workflow_names, capabilities)
+        total_errors += len(errors)
+        items.append({"workflow": path.stem, "path": str(path), "status": "passed" if not errors else "failed", "errors": errors})
+    payload = {
+        "generated_at": _utc_now_iso(),
+        "summary": {"status": "passed" if total_errors == 0 else "failed", "workflow_count": len(items), "error_count": total_errors},
+        "workflows": items,
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    if total_errors:
+        raise SystemExit(1)
+
+
+def _probe_provider(provider: dict[str, Any], root: Path) -> tuple[bool, str]:
+    probe = provider.get("probe")
+    if probe == "always":
+        return True, "built-in provider"
+    if probe == "command":
+        command = str(provider.get("command", "")).strip()
+        resolved = shutil.which(command) if command else None
+        if not resolved:
+            return False, f"command not found on PATH: {command}"
+        required_path = str(provider.get("path", "")).strip()
+        if required_path:
+            path = Path(required_path)
+            if not path.is_absolute():
+                path = root / path
+            if not path.exists():
+                return False, f"command found but required path not found: {path}"
+            return True, f"command found: {resolved}; required path exists: {path.resolve()}"
+        return True, f"command found: {resolved}"
+    if probe == "path":
+        raw_path = str(provider.get("path", "")).strip()
+        path = Path(raw_path)
+        if not path.is_absolute():
+            path = root / path
+        return (True, f"path exists: {path.resolve()}") if path.exists() else (False, f"path not found: {path}")
+    return False, f"unsupported probe type: {probe!r}"
+
+
+def _doctor_capabilities(root: Path, capability_name: str | None = None) -> dict[str, Any]:
+    registry = _load_capability_registry(root)
+    capabilities: dict[str, Any] = registry["capabilities"]
+    if capability_name and capability_name not in capabilities:
+        raise SystemExit(f"unknown capability: {capability_name}")
+    selected_capabilities = {capability_name: capabilities[capability_name]} if capability_name else capabilities
+    items = []
+    unresolved = 0
+    for name, capability in selected_capabilities.items():
+        provider_results = []
+        selected = None
+        for provider in capability["providers"]:
+            available, reason = _probe_provider(provider, root)
+            result = {
+                "name": provider["name"],
+                "available": available,
+                "reason": reason,
+                "description": provider.get("description", ""),
+            }
+            provider_results.append(result)
+            if selected is None and available:
+                selected = provider["name"]
+        if selected is None:
+            unresolved += 1
+        items.append(
+            {
+                "capability": name,
+                "description": capability.get("description", ""),
+                "selected_provider": selected,
+                "status": "available" if selected else "unresolved",
+                "providers": provider_results,
+            }
+        )
+    return {
+        "generated_at": _utc_now_iso(),
+        "project_root": str(root),
+        "summary": {"status": "passed" if unresolved == 0 else "partial", "capability_count": len(items), "unresolved_count": unresolved},
+        "capabilities": items,
+    }
+
+
+def cmd_doctor_capabilities(args: argparse.Namespace) -> None:
+    payload = _doctor_capabilities(Path(args.project_root).resolve(), args.name)
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    if args.strict and payload["summary"]["unresolved_count"]:
+        raise SystemExit(1)
+
+
+def cmd_resolve_capability(args: argparse.Namespace) -> None:
+    payload = _doctor_capabilities(Path(args.project_root).resolve(), args.name)
+    capability = payload["capabilities"][0]
+    result = {
+        "capability": capability["capability"],
+        "selected_provider": capability["selected_provider"],
+        "status": capability["status"],
+        "providers": capability["providers"],
+    }
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    if capability["selected_provider"] is None:
+        raise SystemExit(1)
+
+
 def cmd_init_project(args: argparse.Namespace) -> None:
     project_root = Path(args.project_root).resolve()
     project_root.mkdir(parents=True, exist_ok=True)
@@ -1151,6 +1371,24 @@ def main() -> None:
     c17.add_argument("--project-root", default=".")
     c17.add_argument("--output", default="docs/indexes/02-spec-change-index.md")
     c17.set_defaults(func=cmd_sync_spec_index)
+
+    c18 = sub.add_parser("validate-workflow", help="Validate workflow recipes and their skill/capability references")
+    c18.add_argument("--project-root", default=".")
+    workflow_target = c18.add_mutually_exclusive_group(required=True)
+    workflow_target.add_argument("--all", action="store_true", help="Validate every workflows/*.yaml recipe")
+    workflow_target.add_argument("--workflow", action="append", help="Workflow name to validate; can be passed multiple times")
+    c18.set_defaults(func=cmd_validate_workflow)
+
+    c19 = sub.add_parser("doctor-capabilities", help="Probe capability providers without installing dependencies")
+    c19.add_argument("--project-root", default=".")
+    c19.add_argument("--name", help="Diagnose one capability only")
+    c19.add_argument("--strict", action="store_true", help="Exit non-zero when any diagnosed capability is unresolved")
+    c19.set_defaults(func=cmd_doctor_capabilities)
+
+    c20 = sub.add_parser("resolve-capability", help="Resolve one capability to the first available provider")
+    c20.add_argument("--project-root", default=".")
+    c20.add_argument("--name", required=True)
+    c20.set_defaults(func=cmd_resolve_capability)
 
     args = p.parse_args()
     args.func(args)

@@ -1,0 +1,15 @@
+{
+  "name": "archive",
+  "version": 1,
+  "level": "L3",
+  "description": "Verify memory boundaries and archive durable change knowledge.",
+  "skills": [
+    "context-archiver",
+    "memory-sync-gate",
+    "permanent-memory",
+    "devflow-marshal"
+  ],
+  "required_capabilities": ["devflow_governance"],
+  "outputs": ["archive.md", "memory_gate_verdict", "stable_memory_candidates"],
+  "next_workflows": []
+}
