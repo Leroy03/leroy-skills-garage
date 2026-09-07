@@ -1,36 +1,29 @@
-# AGENTS.md（個人日常短版）
+# 個人協作規則
 
-目標：先做對，再做快；在最小流程下保持可驗證交付。
+目標：最小必要流程，保留可驗證交付。即時指令優先；專案規則與已批准範圍決定實際門禁。
 
-## 執行順序
-1. 遵循即時指令與限制。
-2. 先走 `entry-router`；若 `grill_required=yes`，**必先** `grill-lite` 再分級。
-3. 依分級選 skill，避免過度流程化。
+## 分級與執行
+- L0／⚪：問答、建議、只讀分析，直接處理。
+- L1／🟢：明確、低風險小改，最小修改及直接驗證。
+- L2／🟡：多檔或中風險，規劃與審議後停 Reviewed=Approved；使用者已明確批准繼續時，記錄批准後執行，不重問。
+- L3／🔴：正式、立案、封存或高風險跨系統，使用 devflow-marshal 及專案狀態機；每次狀態流轉留下審計。
+- 分級是判斷，不是必讀的技能。只分析的請求不擅自改檔；已授權實作則持續完成必要工作。
 
-## 分級速記
-- `L0 / ⚪`：問答/建議，直接回覆。
-- `L1 / 🟢`：單檔低風險，最小改動 + 驗證。
-- `L2 / 🟡`：多檔或中風險，要規劃與證據，停於 `Reviewed=Approved`。
-- `L3 / 🔴`：正式/立案/歸檔/高風險跨系統，交 `DevFlow Marshal`。
+## 工作原則
+- 先查現有實作與可用工具，優先復用；只改直接相關內容，保留未提交及無關改動。
+- 澄清只問無法查證且會改變範圍、重要取捨、授權或驗收的缺口；不固定題數，承接已知偏好。
+- 不確定成本時先定義有界實驗、決策依據與停止條件。重複失敗且無新證據時更換可驗證假設，不用語氣取代行動。
+- 新增／升級依賴需讀變更說明、直接驗證與回滾方法。
+- 除 L0 外，完成聲明提供直接證據與 completion_decision: pass | partial | fail。區分規劃、編譯、Runtime 與視覺驗收。
+- AGENTS.md／CLAUDE.md 作為同一作用域規則時保持同步；專案文件各依該專案要求，不以修改全域規則代替專案批准。
 
-## 常用鏈路
-- 實作：`requirement-analyst` -> `task-planner` -> `pragmatic-coder` -> `verification-before-completion`
-- 排查：`context-builder` -> `bug-hunter` -> `verification-before-completion`
-- 發版前：`test-evidence-packager` -> `qa-gatekeeper`（必要時） -> `delivery-tracker`
+## 專項技能
+- 複雜需求、取捨、排期：work-planning；明確小修直接做。
+- 指定評審或高風險复核：engineering-review。
+- 測試計畫、交付證據、發布檢查：delivery-evidence。
+- 工作摘要、穩定知識與交接：project-memory；不預設每次落盤。
+- 正式 run、契約與封存：devflow-marshal。
+- 寵物與網盤：hatch-pet、quarkclouddrive，僅匹配各自任務。
+- 文件、簡報、試算表、網站、圖像及其他工具操作，選目前已安裝的對應系統／插件技能，不寫死不存在的供應者。
 
-## 個人缺口補位
-- 澄清先行：要改代碼且驗收不清 -> `grill-lite`（5-8 題），再進 L1/L2。
-- Spike 先行：方案未定/成本未知先產出 `timebox/options/recommendation/stop`。
-- 依賴門禁：新增/升級依賴需 changelog、直接驗證、回滾說明。
-- 記憶分層：`context-archiver`（單次）/`permanent-memory`（長期）/`memory-sync-gate`（封存前）。
-- Spec-first：`L2/L3` 預設使用 `change-id` 作為需求主鍵；`run-id` 只作執行實例、審計與證據追蹤。
-- 文書邊界：需求/設計/任務正文放 `changes/<change-id>/`；DevFlow run 文書只放治理摘要與 gate 結論。
-
-## 不可省
-- 除 `L0` 外，宣告完成前必有驗證證據與 `completion_decision`。
-- `AGENTS.md` 與 `CLAUDE.md` 規則需同步，衝突取較嚴者。
-- `L2/L3` 在 `Reviewed=Approved` 前需檢查 change artifacts：`proposal.md`、`design.md`、`tasks.md`，必要時包含 `spec-delta/`。
-
-## 三省六部速記
-- `🟡/🔴`：中書（規劃）-> 門下（審議）-> 尚書（統籌）再執行；`🟡` 停 `Reviewed=Approved`，`🔴` 走完整狀態機。
-- 六部按職能分派：分流/上下文、實作/優化、驗證/門禁、交付/沉澱；避免所有任務都走重治理。
+一般任務只用需要的專項，不依序預載全部技能。entry-router／grill-lite 暫作舊專案規則的薄轉接入口。

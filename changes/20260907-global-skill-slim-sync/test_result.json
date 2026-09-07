@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "project": "leroy-skills-garage",
+  "change_id": "20260907-global-skill-slim-sync",
+  "level": "L2",
+  "generated_at": "2026-09-07T20:33:20.817726+08:00",
+  "git_head": "5fae0e289e5186ef35e7c3159cecde536394fd50",
+  "dirty_manifest_sha256": "b924f9baf936456a0f21775744bf05379f2881b68a8e855a9d66b4caf318fa06",
+  "environment": {
+    "cwd": "D:\\leroy-skills-garage",
+    "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "summary": {
+    "total_commands": 9,
+    "passed": 9,
+    "failed": 0,
+    "duration_ms": 915,
+    "overall_status": "passed"
+  },
+  "commands": [
+    {
+      "id": "1",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe D:\\leroy-skills-garage\\changes\\20260907-global-skill-slim-sync\\verify_sync.py --source C:\\Users\\Administrator\\.codex",
+      "start_at": "2026-09-07T20:33:19.8839+08:00",
+      "end_at": "2026-09-07T20:33:19.974401+08:00",
+      "duration_ms": 90,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "{\"status\": \"passed\", \"skill_count\": 9, \"file_count\": 70, \"python_syntax_checked\": 23, \"errors\": []}\n",
+      "stderr": ""
+    },
+    {
+      "id": "2",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/validate_skills.py --write-status docs/status.md",
+      "start_at": "2026-09-07T20:33:19.97443+08:00",
+      "end_at": "2026-09-07T20:33:20.046781+08:00",
+      "duration_ms": 72,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "{\n  \"generated_at\": \"2026-09-07T12:33:20+00:00\",\n  \"summary\": {\n    \"status\": \"passed\",\n    \"skill_count\": 9,\n    \"package_count\": 4,\n    \"registry_count\": 9,\n    \"text_file_count\": 143,\n    \"error_count\": 0,\n    \"warning_count\": 0\n  },\n  \"skills\": [\n    {\n      \"path\": \"skills/delivery-evidence/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"delivery-evidence\",\n      \"description\": \"依變更風險選擇回歸驗證、執行測試並整理完成或發布證據。適用交付檢查、測試計畫與專案要求的 test_result.json；簡單問答不使用。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/devflow-marshal/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"devflow-marshal\",\n      \"description\": \"執行專案指定的 L2/L3 審議、run 狀態、證據契約與封存門禁。適用正式治理、立案、走流程、發布或封存控制；日常問答和小修不啟動狀態機。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/engineering-review/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"engineering-review\",\n      \"description\": \"評審指定程式變更、技術方案或產出，提出可定位且有證據的錯誤與風險。適用明確 review／復核或高風險審查；不把每次編碼都升級為正式評審。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/entry-router/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"entry-router\",\n      \"description\": \"舊專案規則點名 entry-router 時的相容入口；將既有 L0–L3 分級對應到新技能，不提供額外執行鏈。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/grill-lite/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"grill-lite\",\n      \"description\": \"舊專案規則點名 grill-lite 時的相容入口；必要澄清由 work-planning 處理，不再固定詢問 5–8 題。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/hatch-pet/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"hatch-pet\",\n      \"description\": \"建立、修復與封裝 Codex v2 動畫寵物，包含 9 個標準動畫狀態、16 個注視方向及圖集 QA。適用新寵物或既有寵物修復；一般插畫使用 imagegen。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/project-memory/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"project-memory\",\n      \"description\": \"維護可追溯的專案決策、穩定知識入口及使用者要求的工作摘要。適用交接、沉澱與查找既有約定；不自動為每次小修建立記憶文件。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/quarkclouddrive/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"quarkclouddrive\",\n      \"description\": \"操作夸克網盤的搜尋、上下載、分享轉存、相簿與文件問答，以及使用者要求的帳號授權。適用夸克網盤任務；技能文件維護不觸發登入、安裝或網盤操作。\",\n      \"errors\": []\n    },\n    {\n      \"path\": \"skills/work-planning/SKILL.md\",\n      \"status\": \"passed\",\n      \"name\": \"work-planning\",\n      \"description\": \"釐清複雜需求、比較有實質取捨的方案、建立依賴與驗收計畫。適用使用者要求方案、排期或跨模組規劃；明確小修不預設使用。\",\n      \"errors\": []\n    }\n  ],\n  \"packages\": [\n    {\n      \"name\": \"core-flow\",\n      \"skill_count\": 4,\n      \"skills\": [\n        \"work-planning\",\n        \"engineering-review\",\n        \"delivery-evidence\",\n        \"project-memory\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"governance-flow\",\n      \"skill_count\": 1,\n      \"skills\": [\n        \"devflow-marshal\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"compatibility\",\n      \"skill_count\": 2,\n      \"skills\": [\n        \"entry-router\",\n        \"grill-lite\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"name\": \"domain-specialists\",\n      \"skill_count\": 2,\n      \"skills\": [\n        \"hatch-pet\",\n        \"quarkclouddrive\"\n      ],\n      \"status\": \"passed\",\n      \"errors\": []\n    }\n  ],\n  \"registry\": [\n    {\n      \"skill\": \"work-planning\",\n      \"package\": \"core-flow\",\n      \"phase\": \"planning\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"engineering-review\",\n      \"package\": \"core-flow\",\n      \"phase\": \"review\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"delivery-evidence\",\n      \"package\": \"core-flow\",\n      \"phase\": \"verification\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"project-memory\",\n      \"package\": \"core-flow\",\n      \"phase\": \"memory\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"devflow-marshal\",\n      \"package\": \"governance-flow\",\n      \"phase\": \"governance\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"entry-router\",\n      \"package\": \"compatibility\",\n      \"phase\": \"compatibility\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"grill-lite\",\n      \"package\": \"compatibility\",\n      \"phase\": \"compatibility\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"hatch-pet\",\n      \"package\": \"domain-specialists\",\n      \"phase\": \"domain\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    },\n    {\n      \"skill\": \"quarkclouddrive\",\n      \"package\": \"domain-specialists\",\n      \"phase\": \"domain\",\n      \"status\": \"passed\",\n      \"warnings\": []\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "3",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m unittest discover -s tests -p test_*.py -v",
+      "start_at": "2026-09-07T20:33:20.046805+08:00",
+      "end_at": "2026-09-07T20:33:20.511653+08:00",
+      "duration_ms": 465,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "",
+      "stderr": "test_bundled_workflows_validate (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_bundled_workflows_validate) ... ok\ntest_command_provider_can_require_project_path (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_command_provider_can_require_project_path) ... ok\ntest_doctor_selects_available_providers (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_doctor_selects_available_providers) ... ok\ntest_invalid_workflow_fails_with_actionable_errors (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_invalid_workflow_fails_with_actionable_errors) ... ok\ntest_resolve_capability_returns_first_available_provider (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_resolve_capability_returns_first_available_provider) ... ok\ntest_strict_doctor_fails_for_unresolved_provider (test_devflow_workflow_capabilities.WorkflowCapabilityCliTests.test_strict_doctor_fails_for_unresolved_provider) ... ok\ntest_minimal_skill_with_reference_is_valid (test_skill_validation.SkillValidationTests.test_minimal_skill_with_reference_is_valid) ... ok\ntest_missing_resource_is_reported (test_skill_validation.SkillValidationTests.test_missing_resource_is_reported) ... ok\ntest_retired_handoff_is_reported_but_no_handoff_is_allowed (test_skill_validation.SkillValidationTests.test_retired_handoff_is_reported_but_no_handoff_is_allowed) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.394s\n\nOK\n"
+    },
+    {
+      "id": "4",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/devflow.py validate-workflow --all",
+      "start_at": "2026-09-07T20:33:20.511678+08:00",
+      "end_at": "2026-09-07T20:33:20.577479+08:00",
+      "duration_ms": 66,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "{\n  \"generated_at\": \"2026-09-07T12:33:20+00:00\",\n  \"summary\": {\n    \"status\": \"passed\",\n    \"workflow_count\": 4,\n    \"error_count\": 0\n  },\n  \"workflows\": [\n    {\n      \"workflow\": \"archive\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\archive.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"debug\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\debug.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"implement\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\implement.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    },\n    {\n      \"workflow\": \"ship\",\n      \"path\": \"D:\\\\leroy-skills-garage\\\\workflows\\\\ship.yaml\",\n      \"status\": \"passed\",\n      \"errors\": []\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "5",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/devflow.py doctor-capabilities --strict",
+      "start_at": "2026-09-07T20:33:20.577501+08:00",
+      "end_at": "2026-09-07T20:33:20.648518+08:00",
+      "duration_ms": 71,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "{\n  \"generated_at\": \"2026-09-07T12:33:20+00:00\",\n  \"project_root\": \"D:\\\\leroy-skills-garage\",\n  \"summary\": {\n    \"status\": \"passed\",\n    \"capability_count\": 4,\n    \"unresolved_count\": 0\n  },\n  \"capabilities\": [\n    {\n      \"capability\": \"repository_search\",\n      \"description\": \"Locate code, symbols, and related files.\",\n      \"selected_provider\": \"ripgrep\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"codegraph-cli\",\n          \"available\": false,\n          \"reason\": \"command not found on PATH: codegraph\",\n          \"description\": \"Optional local semantic code graph with impact analysis.\"\n        },\n        {\n          \"name\": \"ripgrep\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\OpenAI\\\\Codex\\\\bin\\\\c60635126245daef\\\\rg.EXE\",\n          \"description\": \"Default fast text and file search fallback.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"test_execution\",\n      \"description\": \"Execute repository validation commands.\",\n      \"selected_provider\": \"python\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"python\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.EXE\",\n          \"description\": \"Python runtime used by repository validators and tests.\"\n        },\n        {\n          \"name\": \"python3\",\n          \"available\": true,\n          \"reason\": \"command found: C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python3.EXE\",\n          \"description\": \"Python runtime fallback on platforms without a python alias.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"devflow_governance\",\n      \"description\": \"Maintain DevFlow run, change, gate, and audit artifacts.\",\n      \"selected_provider\": \"project-devflow\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"project-devflow\",\n          \"available\": true,\n          \"reason\": \"path exists: D:\\\\leroy-skills-garage\\\\scripts\\\\devflow.py\",\n          \"description\": \"Repository-local DevFlow CLI.\"\n        }\n      ]\n    },\n    {\n      \"capability\": \"manual_user_input\",\n      \"description\": \"Request information that cannot be discovered locally.\",\n      \"selected_provider\": \"conversation\",\n      \"status\": \"available\",\n      \"providers\": [\n        {\n          \"name\": \"conversation\",\n          \"available\": true,\n          \"reason\": \"built-in provider\",\n          \"description\": \"Built-in user collaboration channel.\"\n        }\n      ]\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "6",
+      "command": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe scripts/devflow.py validate-change --change-id 20260907-global-skill-slim-sync",
+      "start_at": "2026-09-07T20:33:20.648541+08:00",
+      "end_at": "2026-09-07T20:33:20.71457+08:00",
+      "duration_ms": 66,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "{\"status\": \"passed\", \"change_id\": \"20260907-global-skill-slim-sync\", \"gate_report\": \"D:\\\\leroy-skills-garage\\\\changes\\\\20260907-global-skill-slim-sync\\\\gate_reports\\\\validate-change.json\"}\n",
+      "stderr": ""
+    },
+    {
+      "id": "7",
+      "command": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe --check skills/quarkclouddrive/scripts/quark-drive.cjs",
+      "start_at": "2026-09-07T20:33:20.714593+08:00",
+      "end_at": "2026-09-07T20:33:20.75059+08:00",
+      "duration_ms": 36,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "8",
+      "command": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe --check skills/quarkclouddrive/scripts/hash-worker.cjs",
+      "start_at": "2026-09-07T20:33:20.750616+08:00",
+      "end_at": "2026-09-07T20:33:20.77864+08:00",
+      "duration_ms": 28,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "9",
+      "command": "git diff --check",
+      "start_at": "2026-09-07T20:33:20.778664+08:00",
+      "end_at": "2026-09-07T20:33:20.799342+08:00",
+      "duration_ms": 21,
+      "exit_code": 0,
+      "status": "passed",
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/devflow-marshal-subagent-scope.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/external-inspirations.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/update_knowledge_index.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/validate_skills.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/capability-routing/spec.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/workflow-composition/spec.md', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "prior_attempts": [
+    {
+      "command": "quick_validate.py skills/work-planning (system and bundled Python)",
+      "exit_code": 1,
+      "reason": "ModuleNotFoundError: No module named 'yaml'",
+      "resolution": "No dependency installed; project validator checks required frontmatter/name/resources, and source manifest verifies every skill file against the approved global version."
+    },
+    {
+      "command": "Node require.resolve('yaml')",
+      "exit_code": 1,
+      "reason": "MODULE_NOT_FOUND",
+      "resolution": "Use the same project validation fallback."
+    }
+  ],
+  "additional_checks": [
+    {
+      "exit_code": 2,
+      "disposition": "Two whitespace issues are unchanged global source content verified by SHA-256; retained for faithful synchronization, not a functional acceptance failure.",
+      "output": "skills/quarkclouddrive/references/file-ops.md:164: new blank line at EOF.\r\nskills/quarkclouddrive/references/file-organize.md:103: trailing whitespace.\r\n+>                                                                                        \r\n",
+      "command": "git diff --cached --check"
+    }
+  ]
+}

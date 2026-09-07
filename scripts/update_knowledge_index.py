@@ -66,11 +66,13 @@ def collect_skill_entries() -> list[str]:
 def collect_support_entries() -> list[str]:
     lines = [
         "## 支撑资源",
+        "- Skill 路由注册表：`skills.registry.json`",
+        "- Skill 能力包：`skills.packages.json`",
         "- DevFlow 协议：`inject/devflow-marshal-context.md`",
         "- DevFlow 工具：`scripts/devflow.py`",
         "- DevFlow 文档：`docs/devflow-run-tooling.md`、`docs/devflow-marshal-subagent-scope.md`",
         "- 记忆库：`memory/永久记忆库.md`、`memory/永久记忆库_INDEX.md`",
-        "- 协作协议：`protocols/collaboration-protocol.yaml`",
+        "- 协作协议：`skills/collaboration-protocol.yaml`",
         "",
     ]
     return lines
@@ -88,7 +90,7 @@ def main() -> None:
         [
             "# 文件树索引",
             "",
-            "该索引用于帮助 `knowledge-keeper`、`context-builder` 等 skills 快速了解仓库结构。",
+            "该索引用于定位当前技能、项目工具与历史记录；按任务需要读取。",
             "",
             *iter_tree(ROOT),
         ]

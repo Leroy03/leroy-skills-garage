@@ -1,18 +1,24 @@
 {
   "name": "implement",
-  "version": 1,
+  "version": 2,
   "level": "L2",
   "description": "Plan and implement a bounded repository change with evidence.",
   "skills": [
-    "requirement-analyst",
-    "task-planner",
-    "context-builder",
-    "pragmatic-coder",
-    "test-evidence-packager",
-    "skill-contract-checker",
-    "verification-before-completion"
+    "work-planning",
+    "delivery-evidence"
   ],
-  "required_capabilities": ["repository_search", "test_execution"],
-  "outputs": ["proposal.md", "design.md", "tasks.md", "delivery.md", "test_result.json"],
-  "next_workflows": ["ship"]
+  "required_capabilities": [
+    "repository_search",
+    "test_execution"
+  ],
+  "outputs": [
+    "proposal.md",
+    "design.md",
+    "tasks.md",
+    "delivery.md",
+    "test_result.json"
+  ],
+  "next_workflows": [
+    "ship"
+  ]
 }

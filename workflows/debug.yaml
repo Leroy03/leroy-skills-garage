@@ -1,17 +1,22 @@
 {
   "name": "debug",
-  "version": 1,
+  "version": 2,
   "level": "L2",
   "description": "Build context, locate root cause, implement a fix, and prove regression coverage.",
   "skills": [
-    "context-builder",
-    "bug-hunter",
-    "tdd-lite",
-    "pragmatic-coder",
-    "regression-matrix-builder",
-    "verification-before-completion"
+    "delivery-evidence"
   ],
-  "required_capabilities": ["repository_search", "test_execution"],
-  "outputs": ["root_cause", "changed_files", "regression_scope", "verification_evidence"],
-  "next_workflows": ["ship"]
+  "required_capabilities": [
+    "repository_search",
+    "test_execution"
+  ],
+  "outputs": [
+    "root_cause",
+    "changed_files",
+    "regression_scope",
+    "verification_evidence"
+  ],
+  "next_workflows": [
+    "ship"
+  ]
 }

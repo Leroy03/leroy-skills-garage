@@ -24,6 +24,6 @@ Supported read-only probes:
 
 ## Integration
 
-- `entry-router` declares `required_capabilities` and `recommended_workflow`.
-- `capability-router` resolves providers before an execution skill starts.
+- Selected workflows declare `required_capabilities`; ordinary work uses the available tools directly.
+- The existing capability CLI resolves providers when needed; no separate routing skill is required.
 - Future adapters may add CodeGraph, Agent-Reach, or Headroom providers without changing workflow recipes.

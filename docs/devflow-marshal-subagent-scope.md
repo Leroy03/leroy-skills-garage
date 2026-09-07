@@ -5,22 +5,20 @@
 
 ## 角色映射
 
-- `planner`：`solution-designer` + `task-planner`
-- `evidence-explorer`：`knowledge-keeper` + `context-builder`
-- `critic`：`code-reviewer` + `qa-gatekeeper` + `ai-output-auditor`
-- `implementer`：`pragmatic-coder`
-- `debugger`：`bug-hunter`
-- `optimizer`：`code-optimizer`
-- `delivery`：`delivery-tracker`
-- `archivist`：`context-archiver` + `permanent-memory`
+- `planner`：`work-planning`
+- `evidence-explorer`：直接查現有檔案及使用搜尋工具
+- `critic`：`engineering-review`
+- `implementer`／`debugger`／`optimizer`：直接使用可用工具實作與診斷
+- `delivery`：`delivery-evidence`
+- `archivist`：`project-memory`
 
 ## 适用原则
 
-- `⚪/🟢`：通常只需调用单个执行型 skill，必要时辅以 `context-builder`
-- `🟡`：推荐先规划，再补上下文，执行后进入 review / QA gate
+- `⚪/🟢`：直接處理，不預設載入技能鏈
+- `🟡`：依專案要求規劃審議，承接既有批准並以直接證據驗收
 - `🔴`：由 `devflow-marshal` 治理全流程，并按阶段调用上述 skills
 
 ## 说明
 
-- 如果后续确实要拆出独立 subagent，可沿用此职责边界
+- 代理分工僅在環境允許、已授權且有可獨立執行的實質工作時使用，不依本表自動分派
 - 在新增独立 skill 前，应优先判断现有 skill 组合是否已足够

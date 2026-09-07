@@ -1,0 +1,4 @@
+interface:
+  display_name: "devflow-marshal"
+  short_description: "Focused workflow for devflow-marshal tasks"
+  default_prompt: "Use $devflow-marshal for the relevant part of this task."

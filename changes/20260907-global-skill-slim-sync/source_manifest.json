@@ -1,0 +1,97 @@
+{
+  "status": "passed",
+  "skill_count": 9,
+  "file_count": 70,
+  "python_syntax_checked": 23,
+  "errors": [],
+  "sha256": {
+    "delivery-evidence": {
+      "SKILL.md": "00e5bd059c2d8a24365a6b9f7dec440c73d264affa4595a299979b705a5159c6",
+      "agents/openai.yaml": "ca043f9388a69a4b0f2650b13902c3ffb60aecc04ea4635338108621e377656a",
+      "references/evidence.md": "991fbbeaa8dd8bed51552985d0cbf00f630c66188835e1d5069fb95b73179a1a",
+      "references/release.md": "57cab14e7aea19a8f6f3e0605db2eb5a2edb2e6d3bbf53c89f125b603e45aac5",
+      "schemas/test_result.schema.json": "9494e1c5f21a809f9302bedb31a31ec7c8b9d7d558fd33a275fca1367976468a"
+    },
+    "devflow-marshal": {
+      "SKILL.md": "a682e91f1dc8811adbd110bbf4510a347e835130bb32732b2d625be926ac84e2",
+      "agents/openai.yaml": "3e90204008c1904fc70a7e32afafbca7759dc3421996bc7aeab09b21f09feeea",
+      "references/contracts-and-archive.md": "b4436628de059b4b1c0eb03e8a175524bf3f59874535310a82735a9488a79dbf",
+      "references/state-and-tools.md": "2e5ed9d0a641b90acb8b65be7ef5b2a9a7ee1e9de7dd994fa31aad4784ab0c11"
+    },
+    "engineering-review": {
+      "SKILL.md": "d8ccbab0563afeca27f5e17dbc3ddfa5c399c068bd0dbd8c862024206ec0277c",
+      "agents/openai.yaml": "bd5d4ccb4a6f94e8bb696b1bc8f3784a3cd2c07aa57b18d12f50d4334730ab65",
+      "references/diagnosis.md": "058f5862efb737f9968f70ab55e0dcfc196b6c7b8f54d40b882668f3aa54da32"
+    },
+    "entry-router": {
+      "SKILL.md": "98657227939c30364d82d7a5a8fae33ab7d0a0363549f3f57765c1d37a6cc60a"
+    },
+    "grill-lite": {
+      "SKILL.md": "be145b585d1a4bd206176a36ed24188e4db3b1cd072661fbcf1e920ea10ff7b0"
+    },
+    "hatch-pet": {
+      "LICENSE.txt": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc",
+      "SKILL.md": "17991f69171564a1fc8e94913ce1cc9860d7bf56636140198a5b066ce0fdd6e1",
+      "agents/openai.yaml": "41f3d1a37a3c83e8080b5200a800a2ca64f02011a7775b09fe5481962b77fa84",
+      "references/animation-rows.md": "62643046b18de139c9147bebe79a0912c9cb1b629c535ed4189a07c41b10a3e3",
+      "references/brand-discovery.md": "46455ae9aa98f909d83fa920b2eeacd41e8cd09da9a00fe70ef910cf547eae34",
+      "references/codex-pet-contract.md": "8c6d1557900c44f267003b9097ad1cfb4e4d29e574ae325c0dd0943b71510d72",
+      "references/look-directions.md": "9a82c3b5484943befd4808c2b2ffb242c074cda6bc912c645d31028d13dd1ef5",
+      "references/preparation.md": "2c234783f0b5ecf6537258c663cec15e896900098d2fef6eae8e5068831ad394",
+      "references/production.md": "ee720fcefd02a6d8e1ee29ea915330c143dd3842bd61fc0af020581c47b025cf",
+      "references/qa-rubric.md": "897e4a7fecc91365087e044d6ffdd1eece8bf729c9d566898a1bdde973633a89",
+      "references/repair-and-acceptance.md": "772337ae1eb904443164925881d1b9a6a7bb9ff662804163e0d0dbf525ee99ca",
+      "references/visual-workers.md": "3e444169b2e12d9381fff5fddd8878018ab41e29de37a19600173daa110482f2",
+      "scripts/assemble_extended_atlas.py": "c05db88c26ad2c2b502008e7fd74ef119f17ed67249b21c8d31e178416e6af29",
+      "scripts/combine_direction_blind_verdicts.py": "345356373cd31d753dfce10ae768c5e72fff3c053f00938a5d876569900e7e3f",
+      "scripts/compose_atlas.py": "464c198c63e3bc267144056573c8cab3de1f99a4fc5bd47f9e52dffe3f1c88ad",
+      "scripts/compose_cardinal_anchor_strip.py": "da08687a15a6d4c7a4b35dba215c79c9041c83817260bb407306be427ed28931",
+      "scripts/derive_running_left_from_running_right.py": "6bcfdee72cade0f9f585440ce6c5904e88fbbb3133f0171d91fef95d2b743ae7",
+      "scripts/despill_chroma_edges.py": "dffe62a25a793273df1f548e58e53d4d85d574f5f49e47d0c1e3f9856f4e5bb7",
+      "scripts/extract_cardinal_anchors.py": "a0f10a4b6091d1f6487fae10bddd3c9e3e908da8325a8c1126c95116f26c00d3",
+      "scripts/extract_strip_frames.py": "2b9d2ccc997c3b7a084476fdd589fe180b9f1fe663b9147e42159fd1dc8ea818",
+      "scripts/inspect_frames.py": "a7521cf9509627313d662eb0cd56cd6655c27a3c9cedf54ed78faf52305bfe4b",
+      "scripts/make_contact_sheet.py": "76c277a77f9cacb4d11c12d6d81bacaba5603ae90775bfa36f214d5dbf84ba5e",
+      "scripts/make_direction_blind_qa_sheet.py": "7e7ae9a21940c76d50ef51b9b631eeb9210077cd7c9224fc2a9e3d5cee2ab2fe",
+      "scripts/make_direction_qa_sheet.py": "a1c2b56c57bff6f42fcea407a0586f7121fbb099fbe72409d0226e208987d8b3",
+      "scripts/measure_direction_continuity.py": "2c03ac46e1972b42f9eeb7fa7c491e2054ff58fd783c38dca93d022e5ff6ebd3",
+      "scripts/prepare_pet_run.py": "e715302f7c23c1c768a78bbd1803b601fabcd21292702396fd0100b09b282f45",
+      "scripts/render_animation_previews.py": "d085a2b63b50876337600815a7ed9e9e7091b71114ce281e113d6971080b5dd0",
+      "scripts/validate_atlas.py": "523528e77f58cbc4b71500249988092ba750d54657f37fe21c0a0a00a248f50a",
+      "scripts/validate_direction_blind_verdicts.py": "945de893cdc62120fabb81541add210a4a94a4d822715392a7451a533e3456c0",
+      "tests/test_assemble_extended_atlas.py": "aa5d10a1209e97ddb04d13e575cf24345bb2217fb33513ba3fa576ee0165041c",
+      "tests/test_chroma_matte_decontamination.py": "3433009318ceb22201ff8f9cf80ab87a1acfd6f0b572802a121d225ff259c2f5",
+      "tests/test_direction_acceptance_policy.py": "66dcfd261208618b2a6c1a859f7c92e623b6df41111cf88d6122a565cb744ead",
+      "tests/test_direction_blind_consensus.py": "cc70633a859f76c4e9d30f34d4f06c54523727287776597e0f960442213db2b4",
+      "tests/test_look_row_safe_box_prompt.py": "2d321817d32039c10aaf536a688013cdedfe99c5ce5aa4698bab25b50730d63b",
+      "tests/test_single_final_chroma_pass.py": "784db16a6490ce5e91161c24dcf09bbf8fa0bb7580f1cf333132cad274202780"
+    },
+    "project-memory": {
+      "SKILL.md": "176df2daf405429ec2df1c0171c3f185e02e5602bb6e6198bf7f1d52d320bf05",
+      "agents/openai.yaml": "3b3b4ec84871398586a34ee9370b71755eac9403e21bd5c04ec1a3e88bb1ba5d"
+    },
+    "quarkclouddrive": {
+      "SKILL.md": "6b5e413ad23021e5016429e4ddd548ab7b570ed8e8cdf738ba10653f67f86475",
+      "codex/config.json": "33d0c4f5e579516cf677a0de0288a7d1a539f2840f63c076a97255e1541c7ecc",
+      "references/assistant.md": "de8f4edf861a99b2b2f0c53f25a5bbd7d507b60c28fdf2e4a7c9c28b84a2f4c7",
+      "references/auth.md": "d18277b860f4d0ad4e7426d8f89f3b43a30fd56091a0a571e0cabd733b8a5165",
+      "references/file-ops.md": "e2cd53e6cb5666648ea0382ec018482a9cca74a895798f92df40a213f6a9b811",
+      "references/file-organize.md": "301473ab9615067f9222a09ce299ead6c70a6dc59635c8fe69d9745b0de02a71",
+      "references/file-read.md": "5ee68b321244cceee0255fa51cb3633375a634435ce1b1b44cb88001112b303e",
+      "references/file-saveas.md": "1bfbe0950eec18743352701bc5855dc24e26bf50ea29a2c7d77f6be79e84e3e3",
+      "references/file-search.md": "993eadcaa16aeda0ed72f855419a8579e2de8244fb242acf471a55b8c22c895d",
+      "references/file-share.md": "9771bdfdbf9ef33447d4911277955b4168a836385dad82ffacc26136569ba55d",
+      "references/file-upload.md": "af6afb5fcac5189f4da9d7d8490122e9eb34963057ef5878065c001305cd9de0",
+      "references/service-contract.md": "391f8288e89dc5adb2818c3ab66728d057af56fd63e39dda91b88c757272094b",
+      "scripts/hash-worker.cjs": "f921dc5a53108c7f00aa6613a4fe7eacd986a881fdf18fb4dd03a83455921cc5",
+      "scripts/install.sh": "8a1f08c6b50f9c6535e90200ffc67a71b96b98e9da330f258270057974bc0a87",
+      "scripts/quark-drive.cjs": "85a412ee9cdb2a0d32345e83464436d0ed2b0953da76c3bf8d4176e689c38121",
+      "scripts/uninstall.sh": "d94bd82de7be3523f1f31a97478b86d4b19765e0502111a82f6eec94f03c54cb"
+    },
+    "work-planning": {
+      "SKILL.md": "43f6816f221f8c6ff85ea3b04b30f0f3126aeb44c4fd084023a4f4500c449712",
+      "agents/openai.yaml": "df601c4a0e6377b252ff3646c1904ea4465938eb68a209364e3971b445e82148",
+      "references/change-records.md": "a301faaa8e442f93467a1492f735391957dff3bb5c242a9f68bbfe731ba4c341"
+    }
+  }
+}

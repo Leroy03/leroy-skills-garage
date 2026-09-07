@@ -1,0 +1,4 @@
+interface:
+  display_name: "work-planning"
+  short_description: "Focused workflow for work-planning tasks"
+  default_prompt: "Use $work-planning for the relevant part of this task."

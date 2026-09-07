@@ -22,7 +22,7 @@ Required fields:
 ## Rules
 
 - Recipes contain orchestration metadata only; skill behavior remains in `skills/*/SKILL.md`.
-- Recipes do not bypass `entry-router`, review gates, or `change-id` requirements.
+- Recipes follow project review gates and `change-id` requirements; `entry-router` is a compatibility entrypoint, not a mandatory step.
 - `L2/L3` recipes use repository-backed change artifacts.
 - Suggested next workflows are advisory and must be re-routed for the current request.
 

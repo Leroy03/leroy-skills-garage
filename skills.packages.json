@@ -1,87 +1,62 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "packages": [
     {
       "name": "core-flow",
-      "description": "Lightweight default path for routing, execution guardrails, small implementation, and completion evidence.",
+      "description": "按需規劃、評審、驗證與記憶；不要求固定執行鏈。",
       "level_range": [
-        "L0",
-        "L1"
+        "L1",
+        "L2",
+        "L3"
       ],
       "skills": [
-        "entry-router",
-        "capability-router",
-        "grill-lite",
-        "karpathy-guidelines",
-        "pragmatic-coder",
-        "verification-before-completion"
+        "work-planning",
+        "engineering-review",
+        "delivery-evidence",
+        "project-memory"
       ],
       "verify": "python scripts/validate_skills.py --pack core-flow"
     },
     {
-      "name": "planning-flow",
-      "description": "Bounded planning and context construction for multi-file but controlled work.",
-      "level_range": [
-        "L2"
-      ],
-      "skills": [
-        "grill-lite",
-        "solution-designer",
-        "task-planner",
-        "context-builder",
-        "requirement-analyst",
-        "requirement-locator"
-      ],
-      "verify": "python scripts/validate_skills.py --pack planning-flow"
-    },
-    {
-      "name": "quality-gates",
-      "description": "Verification, regression, contract, audit, and release-readiness gates.",
+      "name": "governance-flow",
+      "description": "專案要求時啟用正式狀態、契約與封存門禁。",
       "level_range": [
         "L2",
         "L3"
       ],
       "skills": [
-        "test-evidence-packager",
-        "skill-contract-checker",
-        "qa-gatekeeper",
-        "regression-matrix-builder",
-        "code-reviewer",
-        "ai-output-auditor",
-        "delivery-tracker"
-      ],
-      "verify": "python scripts/validate_skills.py --pack quality-gates"
-    },
-    {
-      "name": "governance-flow",
-      "description": "Formal DevFlow state machine, orchestration, memory gate, and archival path.",
-      "level_range": [
-        "L3"
-      ],
-      "skills": [
-        "devflow-marshal",
-        "dev-flow-orchestrator",
-        "memory-sync-gate",
-        "context-archiver",
-        "permanent-memory"
+        "devflow-marshal"
       ],
       "verify": "python scripts/validate_skills.py --pack governance-flow"
     },
     {
-      "name": "implementation-specialists",
-      "description": "Focused execution skills selected by context after routing.",
+      "name": "compatibility",
+      "description": "舊專案規則的薄相容入口。",
       "level_range": [
+        "L0",
         "L1",
-        "L2"
+        "L2",
+        "L3"
       ],
       "skills": [
-        "bug-hunter",
-        "code-optimizer",
-        "tdd-lite",
-        "knowledge-keeper",
-        "daily-qa-work-summary"
+        "entry-router",
+        "grill-lite"
       ],
-      "verify": "python scripts/validate_skills.py --pack implementation-specialists"
+      "verify": "python scripts/validate_skills.py --pack compatibility"
+    },
+    {
+      "name": "domain-specialists",
+      "description": "僅在寵物或夸克網盤任務中使用。",
+      "level_range": [
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "skills": [
+        "hatch-pet",
+        "quarkclouddrive"
+      ],
+      "verify": "python scripts/validate_skills.py --pack domain-specialists"
     }
   ]
 }

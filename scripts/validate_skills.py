@@ -13,7 +13,20 @@ from pathlib import Path
 from typing import Any
 
 TEXT_SUFFIXES = {'.md', '.py', '.yaml', '.yml', '.json', '.toml', '.txt'}
-REQUIRED_SECTIONS = ('## Contract', '## Fallback', '## Handoff')
+SKILL_NAME = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
+
+
+def validate_skill_resources(path: Path, text: str) -> list[str]:
+    """Check concrete relative Markdown links without requiring workflow boilerplate."""
+    errors: list[str] = []
+    for target in re.findall(r'\]\(([^)]+)\)', text):
+        target = target.strip().strip('<>')
+        if re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*:', target) or target.startswith('#'):
+            continue
+        target = target.split('#', 1)[0]
+        if target and not (path.parent / target).exists():
+            errors.append(f'missing linked resource: {target}')
+    return errors
 
 
 def read_text(path: Path) -> tuple[str | None, str | None]:
@@ -35,11 +48,22 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str | None]:
     except ValueError:
         return {}, 'missing closing frontmatter delimiter'
     meta: dict[str, str] = {}
-    for line in lines[1:end]:
+    frontmatter_lines = lines[1:end]
+    for index, line in enumerate(frontmatter_lines):
         if ':' not in line:
             continue
         key, value = line.split(':', 1)
-        meta[key.strip()] = value.strip().strip('"').strip("'")
+        key = key.strip()
+        value = value.strip()
+        if value in {'>', '>-', '|', '|-'}:
+            folded: list[str] = []
+            for extra in frontmatter_lines[index + 1:]:
+                if not extra.startswith('  '):
+                    break
+                folded.append(extra.strip())
+            meta[key] = ' '.join(folded).strip()
+        else:
+            meta[key] = value.strip('"').strip("'")
     if not meta.get('name'):
         return meta, 'missing name in frontmatter'
     if not meta.get('description'):
@@ -59,6 +83,105 @@ def load_packages(root: Path) -> tuple[dict[str, Any] | None, list[str]]:
     except json.JSONDecodeError as exc:
         return None, [f'skills.packages.json invalid JSON: {exc}']
     return data, []
+
+
+def load_registry(root: Path) -> tuple[dict[str, Any] | None, list[str]]:
+    path = root / 'skills.registry.json'
+    if not path.is_file():
+        return None, []
+    text, err = read_text(path)
+    if err:
+        return None, [f'skills.registry.json {err}']
+    try:
+        data = json.loads(text or '{}')
+    except json.JSONDecodeError as exc:
+        return None, [f'skills.registry.json invalid JSON: {exc}']
+    return data, []
+
+
+def validate_string_list(value: Any, field: str, skill: str) -> list[str]:
+    if not isinstance(value, list):
+        return [f'registry {skill}: {field} must be a list']
+    if not value:
+        return [f'registry {skill}: {field} should not be empty']
+    if not all(isinstance(item, str) and item.strip() for item in value):
+        return [f'registry {skill}: {field} must contain only non-empty strings']
+    return []
+
+
+def validate_registry(
+    registry: dict[str, Any] | None,
+    skill_names: set[str],
+    package_names: set[str],
+    selected_names: set[str] | None = None,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    if not registry:
+        return [], ['skills.registry.json missing; AI routing hints are unavailable']
+
+    warnings: list[str] = []
+    registry_items: list[dict[str, Any]] = []
+    entries = registry.get('skills')
+    if not isinstance(entries, list) or not entries:
+        return registry_items, ['skills.registry.json: skills must be a non-empty list']
+
+    seen: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict):
+            warnings.append('skills.registry.json: each skill entry must be an object')
+            continue
+        skill = entry.get('skill')
+        item_warnings: list[str] = []
+        if not isinstance(skill, str) or not skill.strip():
+            warnings.append('skills.registry.json: entry missing skill')
+            continue
+        if skill in seen:
+            item_warnings.append(f'registry {skill}: duplicate entry')
+        seen.add(skill)
+        if skill not in skill_names:
+            item_warnings.append(f'registry {skill}: unknown skill')
+
+        package = entry.get('package')
+        if not isinstance(package, str) or not package.strip():
+            item_warnings.append(f'registry {skill}: package must be a non-empty string')
+        elif package != 'unpackaged' and package not in package_names:
+            item_warnings.append(f'registry {skill}: unknown package {package}')
+
+        phase = entry.get('phase')
+        if not isinstance(phase, str) or not phase.strip():
+            item_warnings.append(f'registry {skill}: phase must be a non-empty string')
+
+        for field in ['level_range', 'triggers', 'anti_triggers']:
+            item_warnings.extend(validate_string_list(entry.get(field), field, skill))
+
+        handoffs = entry.get('handoff_to', [])
+        if not isinstance(handoffs, list) or not all(isinstance(name, str) for name in handoffs):
+            item_warnings.append(f'registry {skill}: handoff_to must be a list of strings')
+        else:
+            for name in handoffs:
+                if name not in skill_names:
+                    item_warnings.append(f'registry {skill}: unknown handoff skill {name}')
+
+        conflicts = entry.get('conflicts_with', [])
+        if not isinstance(conflicts, list) or not all(isinstance(item, str) for item in conflicts):
+            item_warnings.append(f'registry {skill}: conflicts_with must be a list of strings')
+
+        if selected_names is None or skill in selected_names:
+            registry_items.append({
+                'skill': skill,
+                'package': package,
+                'phase': phase,
+                'status': 'warning' if item_warnings else 'passed',
+                'warnings': item_warnings,
+            })
+        warnings.extend(item_warnings)
+
+    missing = sorted(skill_names - seen)
+    if selected_names is not None:
+        missing = [name for name in missing if name in selected_names]
+    for skill in missing:
+        warnings.append(f'registry missing skill: {skill}')
+
+    return registry_items, warnings
 
 
 def collect(root: Path, pack: str | None = None) -> dict[str, Any]:
@@ -94,9 +217,12 @@ def collect(root: Path, pack: str | None = None) -> dict[str, Any]:
             meta, fm_err = parse_frontmatter(text or '')
             if fm_err:
                 item_errors.append(fm_err)
-            missing_sections = [section for section in REQUIRED_SECTIONS if section not in (text or '')]
-            if missing_sections:
-                item_errors.append('missing sections: ' + ', '.join(missing_sections))
+            name = meta.get('name', '')
+            if not SKILL_NAME.fullmatch(name) or len(name) > 64:
+                item_errors.append('invalid skill name')
+            if name != path.parent.name:
+                item_errors.append('skill name must match directory name')
+            item_errors.extend(validate_skill_resources(path, text or ''))
         item['name'] = meta.get('name') if 'meta' in locals() else None
         item['description'] = meta.get('description') if 'meta' in locals() else None
         item['errors'] = item_errors
@@ -137,6 +263,8 @@ def collect(root: Path, pack: str | None = None) -> dict[str, Any]:
             })
             errors.extend(f'package {name}: {e}' for e in item_errors)
 
+    package_names = {x.get('name') for x in package_items if x.get('name')}
+    selected_names: set[str] | None = None
     if pack:
         selected = [x for x in package_items if x.get('name') == pack]
         if not selected:
@@ -146,18 +274,30 @@ def collect(root: Path, pack: str | None = None) -> dict[str, Any]:
             skill_items = [x for x in skill_items if x.get('name') in selected_names]
             package_items = selected
 
+    registry, registry_errors = load_registry(root)
+    errors.extend(registry_errors)
+    registry_items, registry_warnings = validate_registry(
+        registry,
+        skill_names,
+        package_names,
+        selected_names,
+    )
+    warnings.extend(registry_warnings)
+
     return {
         'generated_at': datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         'summary': {
             'status': 'failed' if errors else 'passed',
             'skill_count': len(skill_items),
             'package_count': len(package_items),
+            'registry_count': len(registry_items),
             'text_file_count': text_files,
             'error_count': len(errors),
             'warning_count': len(warnings),
         },
         'skills': skill_items,
         'packages': package_items,
+        'registry': registry_items,
         'errors': errors,
         'warnings': warnings,
     }
@@ -175,7 +315,7 @@ def render_status(result: dict[str, Any]) -> str:
         '| --- | ---: |',
     ]
     summary = result['summary']
-    for key in ['status', 'skill_count', 'package_count', 'text_file_count', 'error_count', 'warning_count']:
+    for key in ['status', 'skill_count', 'package_count', 'registry_count', 'text_file_count', 'error_count', 'warning_count']:
         lines.append(f"| `{key}` | `{summary[key]}` |")
     lines.extend(['', '## Packages', '', '| Package | Skills | Status |', '| --- | ---: | --- |'])
     for item in result['packages']:
@@ -183,6 +323,9 @@ def render_status(result: dict[str, Any]) -> str:
     lines.extend(['', '## Skills', '', '| Skill | Path | Status |', '| --- | --- | --- |'])
     for item in result['skills']:
         lines.append(f"| `{item.get('name')}` | `{item.get('path')}` | `{item.get('status')}` |")
+    lines.extend(['', '## Registry', '', '| Skill | Package | Phase | Status |', '| --- | --- | --- | --- |'])
+    for item in result['registry']:
+        lines.append(f"| `{item.get('skill')}` | `{item.get('package')}` | `{item.get('phase')}` | `{item.get('status')}` |")
     if result['errors']:
         lines.extend(['', '## Errors', ''])
         for err in result['errors']:
