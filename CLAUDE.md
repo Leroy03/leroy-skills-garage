@@ -17,6 +17,12 @@
 - 除 L0 外，完成聲明提供直接證據與 completion_decision: pass | partial | fail。區分規劃、編譯、Runtime 與視覺驗收。
 - AGENTS.md／CLAUDE.md 作為同一作用域規則時保持同步；專案文件各依該專案要求，不以修改全域規則代替專案批准。
 
+## 主模型與子代理分工
+- 主模型負責分析需求、制定計畫、按能力拆分及分派任務、審閱子代理證據並彙整回報。
+- 檔案修改、程式實作、測試執行與提交等具體操作委派子代理；既有「直做」原則表示不加重流程，實作仍依此分工。
+- 子代理預設使用 `model=gpt-5.6-luna`、`reasoning_effort=high`。每次指派須包含目標、範圍、依賴與驗收標準；獨立任務可並行，同檔相依任務依序執行。
+- 子代理回報須提供真實證據、風險及 `completion_decision: pass | partial | fail`。
+
 ## 專項技能
 - 複雜需求、取捨、排期：work-planning；明確小修直接做。
 - 指定評審或高風險复核：engineering-review。
