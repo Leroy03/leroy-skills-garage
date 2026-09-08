@@ -1,11 +1,14 @@
 # External Inspirations
 
-本仓库当前主要吸收了两个外部项目的思路：
+本文件记录曾参考的外部项目与方法论：
+
+除本次 Ponytail 合并说明外，下列技能／治理映射仅作历史参考，现行能力以 `README.md` 和 `AGENTS.md` 为准。
 
 - `obra/superpowers`
 - `forrestchang/andrej-karpathy-skills`
 - `ruvnet/ruflo`
 - `mattpocock/skills`
+- `DietrichGebert/ponytail`（[GitHub](https://github.com/DietrichGebert/ponytail)）
 - `harness`（方法论层）
 - `hermes agent`（任务编排层）
 
@@ -41,6 +44,13 @@
 - 重点能力包括：前置澄清（grilling）、共享领域语言（`CONTEXT.md`）、ADR 沉淀、`tdd` 与 `diagnose` 的工程循环
 - 适合参考其“先对齐再编码、先反馈再扩张”的节奏控制
 - 风险是若全量照搬其命令体系，会与现有 `entry-router + DevFlow Marshal` 重叠
+
+### Ponytail
+- 来源：[DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
+- 已将“少写代码”拆成可执行阶梯并合并到 `AGENTS.md` 与 `CLAUDE.md` 的工作原则：先按目标判断是否需要新增程序，再复用现有实现或配置，再用标准库、平台内建能力或已安装依赖，确有缺口才写最小实现
+- 对 bug 修复的启发是先找共享根因，不只补单个症状
+- 不以少写代码牺牲必要验证、错误处理等要求，也不增加固定流程或表格输出
+- 风险是全量照搬 hooks、mode runtime、benchmark 命令会让本仓库偏离轻量 skill 体系
 
 ### Harness（方法论参考）
 - 强在“验证驱动 + 可重复执行”的工程闭环思维（而非单点技巧）
@@ -86,12 +96,14 @@
 - 不直接复制 Matt 的完整命令生态（如 `grill-with-docs`、`triage`、`to-prd` 等）
 - 不强制每个项目都维护完整 `CONTEXT.md + docs/adr` 文档体系
 - 不引入 Harness/Hermes 的重运行时或平台级控制面，只保留方法论与最小落地规则
+- 不引入 Ponytail runtime、hooks、mode persistence、benchmark 命令或外部插件安装
 
 ## 结果目标
 
 - `⚪/🟢`：像 Karpathy，一样克制、简单、明确
 - `🟡/🔴`：借 Superpowers 的 workflow 能力，但由分级控制复杂度
 - 高风险实现：吸收 Matt 的测试反馈哲学，用 `tdd-lite` 做最小必要保护
+- 复杂度控制：将 Ponytail 的最小化阶梯合并到工作原则，按任务需要使用，不新增独立 skill
 
 ## Matt 技术痕迹盘点（当前状态）
 
