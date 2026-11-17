@@ -1,2 +1,0 @@
-{"ts": "2026-09-07T12:31:09+00:00", "command": "validate-change", "status": "passed", "change_id": "20260907-global-skill-slim-sync", "artifact": "D:\\leroy-skills-garage\\changes\\20260907-global-skill-slim-sync\\gate_reports\\validate-change.json", "error_count": 0}
-{"ts": "2026-09-07T12:33:20+00:00", "command": "validate-change", "status": "passed", "change_id": "20260907-global-skill-slim-sync", "artifact": "D:\\leroy-skills-garage\\changes\\20260907-global-skill-slim-sync\\gate_reports\\validate-change.json", "error_count": 0}
