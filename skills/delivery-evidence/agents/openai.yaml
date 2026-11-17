@@ -1,4 +1,0 @@
-interface:
-  display_name: "delivery-evidence"
-  short_description: "Focused workflow for delivery-evidence tasks"
-  default_prompt: "Use $delivery-evidence for the relevant part of this task."
