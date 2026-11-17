@@ -1,4 +1,0 @@
-{"ts": "2026-06-09T11:43:48+00:00", "actor": "devflow.py", "from_status": null, "to_status": "Draft", "note": "create-run"}
-{"ts": "2026-06-09T11:44:14+00:00", "actor": "codex", "from_status": "Draft", "to_status": "Planned", "note": "plan artifact written"}
-{"ts": "2026-06-09T11:44:14+00:00", "actor": "codex", "from_status": "Planned", "to_status": "Reviewed", "note": "review PASS; user requested execution of planned changes"}
-{"ts": "2026-06-09T11:49:22+00:00", "actor": "codex", "from_status": null, "to_status": null, "note": "link-change 20260609-spec-first-devflow-fusion-first-slice"}
