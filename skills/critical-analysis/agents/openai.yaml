@@ -1,0 +1,4 @@
+interface:
+  display_name: "critical-analysis"
+  short_description: "Focused workflow for critical-analysis tasks"
+  default_prompt: "Use $critical-analysis for the relevant part of this task."

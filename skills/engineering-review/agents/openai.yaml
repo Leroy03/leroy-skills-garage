@@ -1,4 +1,0 @@
-interface:
-  display_name: "engineering-review"
-  short_description: "Focused workflow for engineering-review tasks"
-  default_prompt: "Use $engineering-review for the relevant part of this task."
